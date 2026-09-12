@@ -52,6 +52,16 @@ const envSchema = z.object({
         .regex(/^\d+[smhd]$/, {
             error: 'ACCESS_TOKEN_EXPIRY must be in format like 15m, 2h, 1d, 30s',
         }),
+
+    SMTP_HOST: z.string().optional().default('smtp.gmail.com'),
+    SMTP_PORT: z
+        .string()
+        .optional()
+        .default('465')
+        .transform((val) => parseInt(val, 10)),
+    SMTP_USER: z.string().optional(),
+    SMTP_PASS: z.string().optional(),
+    EMAIL_FROM: z.string().optional().default('VARKA <no-reply@varka.ai>'),
 })
 
 const parsedEnv = envSchema.safeParse(process.env)
@@ -67,6 +77,11 @@ const config = {
     saltRounds: parsedEnv.data.SALT_ROUNDS,
     accessTokenSecret: parsedEnv.data.ACCESS_TOKEN_SECRET,
     accessTokenExpiry: parsedEnv.data.ACCESS_TOKEN_EXPIRY,
+    smtpHost: parsedEnv.data.SMTP_HOST,
+    smtpPort: parsedEnv.data.SMTP_PORT,
+    smtpUser: parsedEnv.data.SMTP_USER,
+    smtpPass: parsedEnv.data.SMTP_PASS,
+    emailFrom: parsedEnv.data.EMAIL_FROM,
 } as const
 
 export default config

@@ -16,7 +16,38 @@ function Reveal({ children, className = '' }: { children: React.ReactNode; class
 
 export default function Page() {
   const [menuOpen, setMenuOpen] = useState(false)
+  const [currentUser, setCurrentUser] = useState<{ firstName: string; lastName?: string; avatar?: string } | null>(null)
+  const [avatarError, setAvatarError] = useState(false)
   const videoRef = useRef<HTMLVideoElement>(null)
+
+  useEffect(() => {
+    const checkAuth = async () => {
+      try {
+        const storedToken = localStorage.getItem('varka_token')
+        const headers: Record<string, string> = {}
+        if (storedToken) headers['Authorization'] = `Bearer ${storedToken}`
+
+        const apiBaseUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3030'
+        const res = await fetch(`${apiBaseUrl}/api/v1/user/me`, {
+          method: 'GET',
+          headers,
+          credentials: 'include',
+        })
+
+        if (res.ok) {
+          const data = await res.json()
+          if (data.data?.user) {
+            setCurrentUser(data.data.user)
+            return
+          }
+        }
+        setCurrentUser(null)
+      } catch {
+        setCurrentUser(null)
+      }
+    }
+    checkAuth()
+  }, [])
 
   useEffect(() => {
     const onScroll = () => document.documentElement.style.setProperty('--scroll-y', `${window.scrollY}px`)
@@ -55,7 +86,28 @@ export default function Page() {
         </a>
         <nav className={`nav-links ${menuOpen ? 'is-open' : ''}`} aria-label="Primary navigation">
           {navItems.map((item) => <a key={item.label} href={item.href} onClick={() => setMenuOpen(false)}>{item.label}</a>)}
-          <Link className="nav-contact" href="/signin" onClick={() => setMenuOpen(false)}>OPTIMIZE YOUR VOYAGE <ArrowUpRight size={14} /></Link>
+          {currentUser ? (
+            <Link className="nav-contact" href="/signin" onClick={() => setMenuOpen(false)} style={{ display: 'inline-flex', alignItems: 'center', gap: '8px' }}>
+              {currentUser.avatar && !avatarError ? (
+                <img
+                  src={currentUser.avatar}
+                  alt={currentUser.firstName}
+                  onError={() => setAvatarError(true)}
+                  style={{ width: '22px', height: '22px', borderRadius: '50%', border: '1px solid var(--rust)', objectFit: 'cover' }}
+                />
+              ) : (
+                <div style={{ width: '22px', height: '22px', borderRadius: '50%', background: 'var(--rust)', color: 'var(--ink)', fontSize: '11px', fontWeight: 700, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                  {currentUser.firstName ? currentUser.firstName.charAt(0).toUpperCase() : 'V'}
+                </div>
+              )}
+              <span>{currentUser.firstName.toUpperCase()} (ACTIVE)</span>
+              <ArrowUpRight size={14} />
+            </Link>
+          ) : (
+            <Link className="nav-contact" href="/signin" onClick={() => setMenuOpen(false)}>
+              OPTIMIZE YOUR VOYAGE <ArrowUpRight size={14} />
+            </Link>
+          )}
         </nav>
         <button className="menu-toggle" type="button" aria-label={menuOpen ? 'Close menu' : 'Open menu'} aria-expanded={menuOpen} onClick={() => setMenuOpen(!menuOpen)}>
           {menuOpen ? <X size={20} /> : <Menu size={20} />}

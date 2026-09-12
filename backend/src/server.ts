@@ -1,72 +1,34 @@
-import 'dotenv/config'
-import { z } from 'zod'
+import "dotenv/config";
+import app from "./app.js";
+import connectMongoDB from "./db/mongodb/connection.js";
+import config from "./config/index.js";
 
-const envSchema = z.object({
-    PORT: z
-        .string()
-        .regex(/^\d+$/, {
-            error: 'Only numbers are allowed !',
-        })
-        .transform((val) => parseInt(val, 10))
-        .refine((val) => val > 0 && val <= 65355, {
-            error: 'Port number must be in range (0, 65355]',
-        }),
+const startServer = async () => {
+  try {
+    await connectMongoDB();
+    const server = app.listen(config.port, () => {
+      console.log(`\n==================================================`);
+      console.log(`🚀 VARKA Backend Server running at http://localhost:${config.port}`);
+      console.log(`📡 API Base URL: http://localhost:${config.port}/api/v1/user`);
+      console.log(`==================================================\n`);
+    });
 
-    MONGODB_URI: z
-        .string()
-        .trim()
-        .min(1, {
-            error: 'MONGODB_URI cannot be empty !',
-        })
-        .regex(
-            /^mongodb(?:\+srv)?:\/\/(?:(?:[^:]+):(?:[^@]+)@)?(?:(?:[a-zA-Z0-9.-]+)(?::\d+)?(?:,[a-zA-Z0-9.-]+(?::\d+)?)*)(?:\/[^?#]*)?(?:\?[^#]*)?$/,
-            {
-                error: 'Invalid MongoDB connection string format',
-            },
-        ),
+    const shutdown = () => {
+      console.log("\nShutting down server gracefully...");
+      server.close(() => {
+        console.log("Server stopped.");
+        process.exit(0);
+      });
+    };
 
-    SALT_ROUNDS: z
-        .string()
-        .regex(/^\d+$/, {
-            error: 'Only numbers are allowed !',
-        })
-        .transform((val) => parseInt(val, 10))
-        .pipe(
-            z
-                .number()
-                .gte(5, {
-                    error: 'Salt must be greater than equal to 5',
-                })
-                .lt(12, {
-                    error: 'Salt must be less than 12',
-                }),
-        ),
+    process.on("SIGINT", shutdown);
+    process.on("SIGTERM", shutdown);
+  } catch (error) {
+    console.error("Failed to start server:", error);
+    process.exit(1);
+  }
+};
 
-    ACCESS_TOKEN_SECRET: z
-        .string()
-        .trim(),
+startServer();
 
-    ACCESS_TOKEN_EXPIRY: z
-        .string()
-        .trim()
-        .regex(/^\d+[smhd]$/, {
-            error: 'ACCESS_TOKEN_EXPIRY must be in format like 15m, 2h, 1d, 30s',
-        }),
-})
-
-const parsedEnv = envSchema.safeParse(process.env)
-
-if (!parsedEnv.success) {
-    console.error('ERROR parsing the environment variables : ', parsedEnv.error.flatten())
-    process.exit(1)
-}
-
-const config = {
-    port: parsedEnv.data.PORT,
-    mongodbUri: parsedEnv.data.MONGODB_URI,
-    saltRounds: parsedEnv.data.SALT_ROUNDS,
-    accessTokenSecret: parsedEnv.data.ACCESS_TOKEN_SECRET,
-    accessTokenExpiry: parsedEnv.data.ACCESS_TOKEN_EXPIRY,
-} as const
-
-export default config
+export default app;
