@@ -503,7 +503,7 @@ export default function SignInPage({ initialMode = 'signin' }: { initialMode?: '
       {/* Header */}
       <header className="signin-header">
         <Link href="/" className="brand-logo-link" aria-label="Varka home">
-          <img src="/logo.png" alt="VARKA — Navigate Smarter" className="brand-logo-img" />
+          <img src="/logo.png" alt="VARKA — Prediction se decision tak" className="brand-logo-img" />
         </Link>
         <Link href="/landing" className="signin-back-link">
           <ArrowLeft size={15} />
@@ -517,7 +517,7 @@ export default function SignInPage({ initialMode = 'signin' }: { initialMode?: '
           {/* ================= ACTIVE SESSION VIEW ================= */}
           {!isCheckingSession && currentUser ? (
             <div className="active-session-card">
-              <div className="signin-kicker">AUTHENTICATED SESSION</div>
+              <div className="signin-kicker">AUTHENTICATED SESSION • PREDICTION SE DECISION TAK</div>
               <div className="active-avatar-wrap">
                 {currentUser.avatar && !avatarError ? (
                   <img
@@ -615,7 +615,7 @@ export default function SignInPage({ initialMode = 'signin' }: { initialMode?: '
               {/* ================= SIGN IN MODE ================= */}
               {mode === 'signin' && (
                 <>
-                  <div className="signin-kicker">INTELLIGENT FREIGHT ENGINE</div>
+                  <div className="signin-kicker">INTELLIGENT FREIGHT ENGINE • PREDICTION SE DECISION TAK</div>
                   <h1 className="signin-title">Sign in to Varka</h1>
                   <p className="signin-subtitle">
                     Access real-time voyage optimization, freight forecasting, and vessel analytics.
@@ -755,7 +755,7 @@ export default function SignInPage({ initialMode = 'signin' }: { initialMode?: '
               {/* ================= SIGN UP MODE ================= */}
               {mode === 'signup' && (
                 <>
-                  <div className="signin-kicker">GET STARTED WITH VARKA</div>
+                  <div className="signin-kicker">GET STARTED WITH VARKA • PREDICTION SE DECISION TAK</div>
                   <h1 className="signin-title">Create your account</h1>
                   <p className="signin-subtitle">
                     Join forward-thinking freight teams optimizing chartering decisions globally.
@@ -1242,6 +1242,8 @@ export default function SignInPage({ initialMode = 'signin' }: { initialMode?: '
         </div>
 
         <div className="signin-legal">
+          <span style={{ color: 'var(--rust)', fontWeight: 600 }}>Prediction se decision tak</span>
+          <span>•</span>
           <span>Enterprise-grade security</span>
           <span>•</span>
           <span>256-bit encryption</span>

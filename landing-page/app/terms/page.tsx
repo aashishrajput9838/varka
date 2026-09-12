@@ -12,7 +12,7 @@ export default function TermsPage() {
     <div className="legal-page">
       <header className="legal-header">
         <Link href="/" className="brand-logo-link" aria-label="Varka home">
-          <img src="/logo.png" alt="VARKA — Navigate Smarter" className="brand-logo-img" />
+          <img src="/logo.png" alt="VARKA — Prediction se decision tak" className="brand-logo-img" />
         </Link>
         <div className="legal-header-links">
           <Link href="/privacy" className="legal-nav-link">
@@ -61,7 +61,7 @@ export default function TermsPage() {
       </main>
 
       <footer className="legal-page-footer">
-        <span>© 2026 Varka. All rights reserved.</span>
+        <span>© 2026 Varka — Prediction se decision tak. All rights reserved.</span>
         <div className="legal-page-footer-links">
           <Link href="/privacy">Privacy Policy</Link>
           <Link href="/signin">Sign In</Link>

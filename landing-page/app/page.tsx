@@ -8,6 +8,7 @@ import DashboardHeader from '@/components/dashboard/DashboardHeader'
 import TrackingPanel from '@/components/dashboard/TrackingPanel'
 import HistoryPanel from '@/components/dashboard/HistoryPanel'
 import AgentPanel from '@/components/dashboard/AgentPanel'
+import PortPredictionPanel from '@/components/dashboard/PortPredictionPanel'
 import { NavSection, UserProfileData, VoyageData } from '@/components/dashboard/types'
 import { DEMO_VOYAGES } from '@/components/dashboard/mockData'
 
@@ -169,12 +170,14 @@ export default function AuthenticatedDashboardPage() {
             )}
 
             {activeSection === 'agent' && <AgentPanel />}
+
+            {activeSection === 'prediction' && <PortPredictionPanel />}
           </div>
 
           {/* Footer note */}
           <footer className="varka-dashboard-footer">
             <div className="varka-footer-meta">
-              <span>VARKA FREIGHT INTELLIGENCE ENGINE • V2.4</span>
+              <span>VARKA FREIGHT INTELLIGENCE • PREDICTION SE DECISION TAK</span>
               <span>© 2026 VARKA PLATFORM</span>
             </div>
           </footer>

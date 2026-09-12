@@ -82,7 +82,7 @@ export default function MarketingLandingPage() {
 
       <header className="site-header">
         <a className="brand-logo-link" href="#top" aria-label="Varka home">
-          <img src="/logo.png" alt="VARKA — Navigate Smarter" className="brand-logo-img" />
+          <img src="/logo.png" alt="VARKA — Prediction se decision tak" className="brand-logo-img" />
         </a>
         <nav className={`nav-links ${menuOpen ? 'is-open' : ''}`} aria-label="Primary navigation">
           {navItems.map((item) => <a key={item.label} href={item.href} onClick={() => setMenuOpen(false)}>{item.label}</a>)}
@@ -116,7 +116,7 @@ export default function MarketingLandingPage() {
 
       <section className="hero" id="top">
         <div className="hero-copy">
-          <p className="eyebrow">INTELLIGENT FREIGHT FORECASTING</p>
+          <p className="eyebrow">PREDICTION SE DECISION TAK • INTELLIGENT FREIGHT FORECASTING</p>
           <h1>Make every<br />voyage <em>smarter.</em></h1>
           <p className="hero-intro">We turn freight volatility, port congestion, and vessel constraints into smarter logistics decisions.</p>
           <a className="circle-link" href="#solution" aria-label="Explore the solution"><span>Explore<br />the solution</span><ArrowDown size={18} /></a>
@@ -174,7 +174,7 @@ export default function MarketingLandingPage() {
         <div className="contact-footer">
           <div className="contact-footer-brand">
             <img src="/logo.png" alt="Varka logo" className="footer-logo-img" />
-            <span>© 2026 Varka</span>
+            <span>© 2026 Varka — Prediction se decision tak</span>
           </div>
           <a
             href="https://www.instagram.com/hellovarka"

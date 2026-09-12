@@ -1,7 +1,7 @@
 'use client'
 
 import { useState, useEffect } from 'react'
-import { Menu, X, Compass, History, Sparkles } from 'lucide-react'
+import { Menu, X, Compass, History, Sparkles, TrendingUp } from 'lucide-react'
 import { NavSection, UserProfileData } from './types'
 import UserProfile from './UserProfile'
 
@@ -64,6 +64,12 @@ export default function MobileNav({
       subtitle: 'Cost intelligence',
       icon: Sparkles,
     },
+    {
+      id: 'prediction' as NavSection,
+      label: 'PORT FORECAST',
+      subtitle: 'ML rates & JIT twin',
+      icon: TrendingUp,
+    },
   ]
 
   const handleSelect = (id: NavSection) => {
@@ -104,8 +110,8 @@ export default function MobileNav({
       <div className={`varka-mobile-drawer ${isOpen ? 'is-open' : ''}`} role="dialog" aria-modal="true">
         <div className="varka-mobile-drawer-header">
           <div className="varka-sidebar-brand">
-            <img src="/logo.png" alt="VARKA" className="varka-sidebar-logo-img" />
-            <span className="varka-sidebar-kicker">FREIGHT CONTROL</span>
+            <img src="/logo.png" alt="VARKA — Prediction se decision tak" className="varka-sidebar-logo-img" />
+            <span className="varka-sidebar-kicker">PREDICTION SE DECISION TAK</span>
           </div>
           <button
             type="button"

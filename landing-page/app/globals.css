@@ -3325,4 +3325,1036 @@ em { color: var(--rust); font-style: italic; }
   }
 }
 
+/* ==========================================================================
+   PORT PREDICTION & CHARTER DECISION ENGINE STYLING
+   ========================================================================== */
+
+.varka-prediction-root {
+  display: flex;
+  flex-direction: column;
+  gap: 22px;
+  width: 100%;
+}
+
+/* Top Hero Banner & Marine Status */
+.varka-prediction-banner {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 20px;
+  background: linear-gradient(135deg, rgba(36, 27, 22, 0.85) 0%, rgba(20, 15, 12, 0.95) 100%);
+  border: 1px solid rgba(226, 138, 59, 0.25);
+  border-radius: 12px;
+  padding: 24px 28px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.45);
+  position: relative;
+  overflow: hidden;
+}
+
+.varka-prediction-banner::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 2px;
+  background: linear-gradient(90deg, #e28a3b, #38bdf8, #10b981);
+}
+
+.varka-pred-pulse-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  color: #38bdf8;
+  background: rgba(56, 189, 248, 0.12);
+  border: 1px solid rgba(56, 189, 248, 0.3);
+  padding: 4px 10px;
+  border-radius: 20px;
+  margin-bottom: 8px;
+}
+
+.varka-pulse-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background-color: #38bdf8;
+  box-shadow: 0 0 8px #38bdf8;
+  animation: varkaBlink 1.8s infinite ease-in-out;
+}
+
+@keyframes varkaBlink {
+  0%, 100% { opacity: 1; transform: scale(1); }
+  50% { opacity: 0.3; transform: scale(0.85); }
+}
+
+.varka-pred-title {
+  font-size: 22px;
+  font-weight: 700;
+  color: #f1e9df;
+  margin: 0 0 6px 0;
+  letter-spacing: -0.01em;
+}
+
+.varka-pred-subtitle {
+  font-size: 13px;
+  color: #a89f91;
+  margin: 0;
+}
+
+.varka-pred-subtitle code {
+  color: #e28a3b;
+  font-family: 'JetBrains Mono', monospace;
+  background: rgba(226, 138, 59, 0.12);
+  padding: 2px 6px;
+  border-radius: 4px;
+}
+
+/* Marine Weather Box */
+.varka-marine-telemetry-box {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  background: rgba(15, 12, 9, 0.7);
+  border: 1px solid rgba(241, 233, 223, 0.1);
+  padding: 12px 18px;
+  border-radius: 8px;
+}
+
+.varka-marine-item {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.varka-marine-header {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 9px;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  color: #8c7e73;
+}
+
+.varka-marine-icon {
+  color: #38bdf8;
+}
+
+.varka-marine-data {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.varka-marine-val {
+  font-size: 16px;
+  font-weight: 700;
+  font-family: 'JetBrains Mono', monospace;
+  color: #f1e9df;
+}
+
+.varka-marine-sub {
+  font-size: 10px;
+  color: #6e6258;
+}
+
+.varka-marine-divider {
+  width: 1px;
+  height: 38px;
+  background: rgba(241, 233, 223, 0.1);
+}
+
+.varka-risk-pill {
+  font-size: 10px;
+  font-weight: 700;
+  padding: 2px 7px;
+  border-radius: 4px;
+  text-transform: uppercase;
+}
+
+.risk-low {
+  background: rgba(16, 185, 129, 0.18);
+  color: #10b981;
+  border: 1px solid rgba(16, 185, 129, 0.35);
+}
+
+.risk-moderate {
+  background: rgba(245, 158, 11, 0.18);
+  color: #f59e0b;
+  border: 1px solid rgba(245, 158, 11, 0.35);
+}
+
+.risk-high {
+  background: rgba(244, 63, 94, 0.18);
+  color: #f43f5e;
+  border: 1px solid rgba(244, 63, 94, 0.35);
+}
+
+/* Error Banner */
+.varka-pred-error-banner {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  background: rgba(244, 63, 94, 0.12);
+  border: 1px solid rgba(244, 63, 94, 0.35);
+  border-radius: 8px;
+  padding: 14px 18px;
+  color: #fecdd3;
+}
+
+.varka-error-icon {
+  color: #f43f5e;
+  flex-shrink: 0;
+}
+
+.varka-error-msg-wrap {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  flex: 1;
+}
+
+.varka-error-title {
+  font-size: 13px;
+  font-weight: 700;
+  color: #f43f5e;
+}
+
+.varka-error-desc {
+  font-size: 12px;
+  color: #fecdd3;
+}
+
+.varka-error-retry-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: rgba(244, 63, 94, 0.2);
+  border: 1px solid rgba(244, 63, 94, 0.4);
+  color: #fff;
+  padding: 6px 12px;
+  border-radius: 6px;
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.varka-error-retry-btn:hover {
+  background: rgba(244, 63, 94, 0.35);
+}
+
+/* Prediction Toolbar */
+.varka-pred-toolbar {
+  background: rgba(24, 19, 14, 0.7);
+  border: 1px solid rgba(241, 233, 223, 0.08);
+  border-radius: 10px;
+  padding: 18px 22px;
+}
+
+.varka-toolbar-grid {
+  display: grid;
+  grid-template-columns: 2.2fr 1.4fr 1.1fr 1.2fr 1.3fr 1.2fr;
+  gap: 16px;
+  align-items: flex-end;
+}
+
+.varka-control-group {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.varka-control-label {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  color: #a89f91;
+}
+
+.varka-control-select,
+.varka-control-input {
+  width: 100%;
+  background: #0f0c09;
+  border: 1px solid rgba(241, 233, 223, 0.14);
+  border-radius: 6px;
+  color: #f1e9df;
+  font-size: 13px;
+  padding: 8px 12px;
+  outline: none;
+  transition: border-color 0.2s ease;
+}
+
+.varka-control-select:focus,
+.varka-control-input:focus {
+  border-color: #e28a3b;
+}
+
+.varka-slider-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.varka-slider-val {
+  font-size: 11px;
+  font-family: monospace;
+  color: #38bdf8;
+  font-weight: 700;
+}
+
+.varka-control-slider {
+  accent-color: #e28a3b;
+  cursor: pointer;
+  height: 6px;
+  border-radius: 3px;
+  margin-top: 8px;
+}
+
+.varka-btn-predict {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  background: linear-gradient(135deg, #e28a3b 0%, #c46d23 100%);
+  color: #fff;
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  border: none;
+  border-radius: 6px;
+  padding: 10px 16px;
+  cursor: pointer;
+  box-shadow: 0 4px 14px rgba(226, 138, 59, 0.3);
+  transition: all 0.2s ease;
+  height: 38px;
+}
+
+.varka-btn-predict:hover:not(:disabled) {
+  transform: translateY(-1px);
+  box-shadow: 0 6px 20px rgba(226, 138, 59, 0.45);
+}
+
+.varka-btn-predict:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+/* KPI Summary Row */
+.varka-pred-kpis {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 16px;
+}
+
+.varka-kpi-card {
+  background: rgba(24, 19, 14, 0.8);
+  border: 1px solid rgba(241, 233, 223, 0.08);
+  border-radius: 10px;
+  padding: 18px 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  transition: transform 0.2s ease, border-color 0.2s ease;
+}
+
+.varka-kpi-card:hover {
+  border-color: rgba(226, 138, 59, 0.3);
+  transform: translateY(-2px);
+}
+
+.varka-kpi-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.varka-kpi-label {
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  color: #8c7e73;
+}
+
+.varka-kpi-icon.accent-cyan { color: #38bdf8; }
+.varka-kpi-icon.accent-blue { color: #60a5fa; }
+.varka-kpi-icon.accent-emerald { color: #10b981; }
+.varka-kpi-icon.accent-green { color: #4ade80; }
+
+.varka-kpi-main {
+  display: flex;
+  align-items: baseline;
+  gap: 6px;
+}
+
+.varka-kpi-num {
+  font-size: 26px;
+  font-weight: 800;
+  font-family: 'JetBrains Mono', monospace;
+  color: #f1e9df;
+  letter-spacing: -0.02em;
+}
+
+.varka-kpi-unit {
+  font-size: 12px;
+  color: #8c7e73;
+}
+
+.varka-kpi-bottom {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.varka-kpi-badge {
+  font-size: 10px;
+  font-weight: 600;
+  background: rgba(241, 233, 223, 0.06);
+  border: 1px solid rgba(241, 233, 223, 0.1);
+  padding: 2px 7px;
+  border-radius: 4px;
+  color: #d1c7bc;
+}
+
+.varka-kpi-sub {
+  font-size: 10px;
+  color: #8c7e73;
+}
+
+/* Subnav Navigation */
+.varka-pred-subnav {
+  display: flex;
+  gap: 10px;
+  border-bottom: 1px solid rgba(241, 233, 223, 0.1);
+  padding-bottom: 12px;
+  overflow-x: auto;
+}
+
+.varka-pred-tab {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  background: transparent;
+  border: 1px solid transparent;
+  color: #a89f91;
+  padding: 8px 16px;
+  border-radius: 6px;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  white-space: nowrap;
+}
+
+.varka-pred-tab:hover {
+  color: #f1e9df;
+  background: rgba(241, 233, 223, 0.04);
+}
+
+.varka-pred-tab.is-active {
+  color: #e28a3b;
+  background: rgba(226, 138, 59, 0.12);
+  border-color: rgba(226, 138, 59, 0.3);
+}
+
+/* Pred Cards Content */
+.varka-pred-card {
+  background: rgba(24, 19, 14, 0.7);
+  border: 1px solid rgba(241, 233, 223, 0.08);
+  border-radius: 12px;
+  padding: 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 22px;
+}
+
+.varka-pred-card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+
+.varka-card-title {
+  font-size: 17px;
+  font-weight: 700;
+  color: #f1e9df;
+  margin: 0 0 4px 0;
+}
+
+.varka-card-desc {
+  font-size: 13px;
+  color: #a89f91;
+  margin: 0;
+}
+
+.varka-card-desc code {
+  background: rgba(241, 233, 223, 0.08);
+  padding: 2px 6px;
+  border-radius: 4px;
+  color: #38bdf8;
+  font-family: monospace;
+}
+
+.varka-subheading {
+  font-size: 14px;
+  font-weight: 700;
+  color: #f1e9df;
+  margin: 0 0 12px 0;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+/* Chart Legend */
+.varka-chart-legend {
+  display: flex;
+  gap: 16px;
+  align-items: center;
+  font-size: 11px;
+  color: #a89f91;
+}
+
+.varka-legend-item {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.legend-line {
+  display: inline-block;
+  width: 18px;
+  height: 2px;
+}
+
+.line-history { background: #94a3b8; }
+.line-forecast { background: #38bdf8; }
+.box-p10-p90 {
+  display: inline-block;
+  width: 14px;
+  height: 10px;
+  background: rgba(56, 189, 248, 0.25);
+  border: 1px solid rgba(56, 189, 248, 0.4);
+}
+
+/* SVG Chart Box */
+.varka-svg-container {
+  width: 100%;
+  background: #0d0a08;
+  border: 1px solid rgba(241, 233, 223, 0.08);
+  border-radius: 8px;
+  padding: 16px;
+}
+
+.varka-forecast-svg {
+  width: 100%;
+  height: auto;
+  display: block;
+}
+
+.varka-loading-box {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  height: 240px;
+  color: #a89f91;
+  font-size: 14px;
+}
+
+/* Data Tables */
+.varka-table-wrap {
+  width: 100%;
+  overflow-x: auto;
+  border: 1px solid rgba(241, 233, 223, 0.08);
+  border-radius: 8px;
+}
+
+.varka-data-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 12px;
+  text-align: left;
+}
+
+.varka-data-table th {
+  background: rgba(36, 27, 22, 0.6);
+  padding: 10px 14px;
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  color: #8c7e73;
+  border-bottom: 1px solid rgba(241, 233, 223, 0.1);
+}
+
+.varka-data-table td {
+  padding: 10px 14px;
+  border-bottom: 1px solid rgba(241, 233, 223, 0.05);
+  color: #f1e9df;
+}
+
+.varka-data-table tbody tr:hover {
+  background: rgba(241, 233, 223, 0.03);
+}
+
+.font-mono { font-family: 'JetBrains Mono', monospace; }
+.text-cyan { color: #38bdf8; }
+.text-emerald { color: #10b981; }
+.text-rose { color: #f43f5e; }
+
+.varka-badge-pill {
+  display: inline-block;
+  font-size: 10px;
+  font-weight: 700;
+  padding: 3px 8px;
+  border-radius: 4px;
+}
+
+.pill-preferred {
+  background: rgba(16, 185, 129, 0.18);
+  color: #10b981;
+  border: 1px solid rgba(16, 185, 129, 0.35);
+}
+
+.pill-defer {
+  background: rgba(245, 158, 11, 0.18);
+  color: #f59e0b;
+  border: 1px solid rgba(245, 158, 11, 0.35);
+}
+
+.pill-neutral {
+  background: rgba(241, 233, 223, 0.08);
+  color: #d1c7bc;
+  border: 1px solid rgba(241, 233, 223, 0.12);
+}
+
+/* XAI Drivers */
+.varka-driver-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 12px;
+}
+
+.varka-driver-card {
+  background: #110d0a;
+  border: 1px solid rgba(241, 233, 223, 0.08);
+  border-radius: 6px;
+  padding: 12px 14px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.varka-driver-title {
+  display: flex;
+  justify-content: space-between;
+  font-size: 11px;
+  font-weight: 700;
+  color: #d1c7bc;
+}
+
+.varka-driver-val {
+  font-family: monospace;
+}
+
+.varka-driver-track {
+  width: 100%;
+  height: 5px;
+  background: rgba(255, 255, 255, 0.07);
+  border-radius: 3px;
+  overflow: hidden;
+}
+
+.varka-driver-bar {
+  height: 100%;
+  border-radius: 3px;
+}
+
+.bar-positive { background: #f43f5e; }
+.bar-negative { background: #10b981; }
+
+.varka-driver-note {
+  font-size: 9px;
+  color: #6e6258;
+}
+
+/* Vessel Feasibility Gate Cards */
+.varka-vessel-cards-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 16px;
+}
+
+.varka-vessel-card {
+  background: #110d0a;
+  border: 1px solid rgba(241, 233, 223, 0.1);
+  border-radius: 8px;
+  padding: 18px;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  position: relative;
+  transition: all 0.2s ease;
+}
+
+.varka-vessel-card.is-best-vessel {
+  border-color: #e28a3b;
+  box-shadow: 0 0 20px rgba(226, 138, 59, 0.18);
+  background: linear-gradient(180deg, rgba(36, 27, 22, 0.6) 0%, #110d0a 100%);
+}
+
+.varka-vessel-card.is-ineligible {
+  opacity: 0.65;
+  filter: grayscale(0.2);
+}
+
+.varka-best-tag {
+  position: absolute;
+  top: -10px;
+  left: 18px;
+  background: #e28a3b;
+  color: #fff;
+  font-size: 9px;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  padding: 3px 8px;
+  border-radius: 4px;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.varka-vessel-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+}
+
+.varka-vessel-name {
+  font-size: 16px;
+  font-weight: 700;
+  color: #f1e9df;
+  margin: 0;
+}
+
+.varka-vessel-score {
+  font-size: 11px;
+  color: #8c7e73;
+}
+
+.varka-vessel-score strong {
+  color: #38bdf8;
+}
+
+.varka-vessel-metrics {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 6px;
+  background: rgba(241, 233, 223, 0.03);
+  padding: 8px;
+  border-radius: 6px;
+}
+
+.varka-vm-item {
+  display: flex;
+  flex-direction: column;
+}
+
+.vm-label {
+  font-size: 8px;
+  color: #8c7e73;
+  font-weight: 700;
+}
+
+.vm-val {
+  font-size: 12px;
+  font-weight: 700;
+  color: #f1e9df;
+}
+
+.varka-gate-checks {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  border-top: 1px solid rgba(241, 233, 223, 0.08);
+  border-bottom: 1px solid rgba(241, 233, 223, 0.08);
+  padding: 10px 0;
+}
+
+.varka-gate-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 11px;
+  color: #a89f91;
+}
+
+.varka-vessel-footer {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.varka-fleet-status {
+  font-size: 11px;
+  font-weight: 600;
+  color: #38bdf8;
+}
+
+.varka-fleet-hulls {
+  font-size: 10px;
+  color: #6e6258;
+}
+
+/* JIT Digital Twin */
+.varka-jit-action-banner {
+  display: flex;
+  align-items: flex-start;
+  gap: 16px;
+  background: rgba(16, 185, 129, 0.12);
+  border: 1px solid rgba(16, 185, 129, 0.35);
+  border-radius: 8px;
+  padding: 16px 20px;
+}
+
+.varka-jit-action-icon {
+  color: #10b981;
+  flex-shrink: 0;
+  margin-top: 2px;
+}
+
+.varka-jit-action-kicker {
+  font-size: 9px;
+  font-weight: 800;
+  letter-spacing: 0.14em;
+  color: #10b981;
+  text-transform: uppercase;
+}
+
+.varka-jit-action-text {
+  font-size: 16px;
+  font-weight: 700;
+  color: #f1e9df;
+  margin: 4px 0 2px 0;
+}
+
+.varka-jit-action-sub {
+  font-size: 12px;
+  color: #a89f91;
+  margin: 0;
+}
+
+.varka-jit-compare-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+}
+
+.varka-compare-box {
+  background: #110d0a;
+  border: 1px solid rgba(241, 233, 223, 0.1);
+  border-radius: 8px;
+  padding: 18px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.varka-compare-box.is-jit-optimized {
+  border-color: rgba(16, 185, 129, 0.4);
+  background: linear-gradient(180deg, rgba(16, 185, 129, 0.08) 0%, #110d0a 100%);
+}
+
+.varka-cb-header {
+  font-size: 11px;
+  font-weight: 800;
+  letter-spacing: 0.1em;
+  color: #8c7e73;
+  border-bottom: 1px solid rgba(241, 233, 223, 0.08);
+  padding-bottom: 8px;
+}
+
+.varka-cb-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 13px;
+  color: #a89f91;
+}
+
+.varka-jit-impact-strip {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 14px;
+  background: rgba(36, 27, 22, 0.5);
+  border: 1px solid rgba(241, 233, 223, 0.08);
+  border-radius: 8px;
+  padding: 16px 20px;
+}
+
+.varka-jis-item {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.jis-label {
+  font-size: 9px;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  color: #8c7e73;
+}
+
+.jis-val {
+  font-size: 16px;
+  font-weight: 800;
+  font-family: 'JetBrains Mono', monospace;
+}
+
+/* Strategy Tab */
+.varka-strategy-posture-banner {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 24px;
+  background: linear-gradient(135deg, rgba(36, 27, 22, 0.7) 0%, rgba(20, 15, 12, 0.9) 100%);
+  border: 1px solid rgba(226, 138, 59, 0.35);
+  border-radius: 10px;
+  padding: 22px 26px;
+  flex-wrap: wrap;
+}
+
+.varka-spb-left {
+  flex: 1;
+  min-width: 280px;
+}
+
+.varka-spb-kicker {
+  font-size: 9px;
+  font-weight: 800;
+  letter-spacing: 0.14em;
+  color: #e28a3b;
+}
+
+.varka-spb-posture {
+  font-size: 20px;
+  font-weight: 800;
+  color: #f1e9df;
+  margin: 4px 0 8px 0;
+}
+
+.varka-spb-action {
+  font-size: 14px;
+  color: #d1c7bc;
+  margin: 0 0 10px 0;
+  line-height: 1.5;
+}
+
+.varka-spb-rationale {
+  font-size: 12px;
+  color: #a89f91;
+  line-height: 1.4;
+}
+
+.varka-spb-right {
+  display: flex;
+  gap: 18px;
+}
+
+.varka-spb-metric {
+  background: #0f0c09;
+  border: 1px solid rgba(241, 233, 223, 0.1);
+  border-radius: 8px;
+  padding: 12px 18px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  min-width: 130px;
+}
+
+.varka-spb-metric span {
+  font-size: 9px;
+  font-weight: 700;
+  color: #8c7e73;
+}
+
+.varka-spb-metric strong {
+  font-size: 18px;
+  font-family: 'JetBrains Mono', monospace;
+  color: #f1e9df;
+}
+
+.varka-protections-box {
+  background: #110d0a;
+  border: 1px solid rgba(241, 233, 223, 0.08);
+  border-radius: 8px;
+  padding: 18px 22px;
+}
+
+.varka-protections-list {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+}
+
+.varka-protection-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 12px;
+  color: #d1c7bc;
+  background: rgba(241, 233, 223, 0.02);
+  border: 1px solid rgba(241, 233, 223, 0.05);
+  padding: 8px 12px;
+  border-radius: 6px;
+}
+
+/* Responsive Breakpoints */
+@media (max-width: 1200px) {
+  .varka-toolbar-grid {
+    grid-template-columns: repeat(3, 1fr);
+  }
+  .varka-vessel-cards-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 850px) {
+  .varka-pred-kpis {
+    grid-template-columns: repeat(2, 1fr);
+  }
+  .varka-toolbar-grid {
+    grid-template-columns: 1fr;
+  }
+  .varka-jit-compare-grid {
+    grid-template-columns: 1fr;
+  }
+  .varka-jit-impact-strip {
+    grid-template-columns: repeat(2, 1fr);
+  }
+  .varka-driver-grid {
+    grid-template-columns: 1fr;
+  }
+  .varka-protections-list {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 550px) {
+  .varka-pred-kpis {
+    grid-template-columns: 1fr;
+  }
+  .varka-vessel-cards-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
 

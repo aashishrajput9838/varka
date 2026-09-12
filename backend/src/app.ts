@@ -2,6 +2,7 @@ import express, { Request, Response, NextFunction } from "express";
 import cors from "cors";
 import cookieParser from "cookie-parser";
 import userRouter from "./routes/user.routes.js";
+import predictionRouter from "./routes/prediction.routes.js";
 
 const app = express();
 
@@ -39,6 +40,9 @@ app.get("/health", (req: Request, res: Response) => {
 
 // User authentication routes
 app.use("/api/v1/user", userRouter);
+
+// ML Freight Prediction and Port Analytics (Protected)
+app.use("/api/v1/prediction", predictionRouter);
 
 // 404 handler
 app.use((req: Request, res: Response) => {

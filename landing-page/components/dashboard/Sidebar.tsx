@@ -1,6 +1,6 @@
 'use client'
 
-import { Compass, History, Sparkles } from 'lucide-react'
+import { Compass, History, Sparkles, TrendingUp } from 'lucide-react'
 import { NavSection, UserProfileData } from './types'
 import UserProfile from './UserProfile'
 
@@ -41,6 +41,13 @@ export default function Sidebar({
       icon: Sparkles,
       badge: 'AI',
     },
+    {
+      id: 'prediction' as NavSection,
+      label: 'PORT FORECAST',
+      subtitle: 'ML rates & JIT twin',
+      icon: TrendingUp,
+      badge: 'ML',
+    },
   ]
 
   return (
@@ -50,10 +57,10 @@ export default function Sidebar({
         <div className="varka-sidebar-brand">
           <img
             src="/logo.png"
-            alt="VARKA — Freight Intelligence"
+            alt="VARKA — Prediction se decision tak"
             className="varka-sidebar-logo-img"
           />
-          <span className="varka-sidebar-kicker">FREIGHT CONTROL</span>
+          <span className="varka-sidebar-kicker">PREDICTION SE DECISION TAK</span>
         </div>
       </div>
 
