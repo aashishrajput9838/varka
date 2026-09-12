@@ -3,8 +3,8 @@ import type { Metadata, Viewport } from 'next'
 import './globals.css'
 
 export const metadata: Metadata = {
-  title: 'Form/Figure — Make the unseen visible',
-  description: 'An independent portrait studio for people, brands, and ideas in the middle of becoming.',
+  title: 'Varka — Make every voyage smarter',
+  description: 'An intelligent freight decision engine for bulk cargo procurement. We turn volatile freight rates, vessel constraints, and port risks into smarter chartering decisions.',
   generator: 'v0.app',
   icons: {
     icon: [
