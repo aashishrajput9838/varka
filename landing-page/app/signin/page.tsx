@@ -505,7 +505,7 @@ export default function SignInPage({ initialMode = 'signin' }: { initialMode?: '
         <Link href="/" className="brand-logo-link" aria-label="Varka home">
           <img src="/logo.png" alt="VARKA — Navigate Smarter" className="brand-logo-img" />
         </Link>
-        <Link href="/" className="signin-back-link">
+        <Link href="/landing" className="signin-back-link">
           <ArrowLeft size={15} />
           <span>Back to overview</span>
         </Link>
