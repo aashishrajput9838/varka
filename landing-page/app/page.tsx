@@ -1,6 +1,7 @@
 'use client'
 
-import { useEffect, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
+import Link from 'next/link'
 import { ArrowDown, ArrowUpRight, Menu, X } from 'lucide-react'
 
 const navItems = [
@@ -15,6 +16,7 @@ function Reveal({ children, className = '' }: { children: React.ReactNode; class
 
 export default function Page() {
   const [menuOpen, setMenuOpen] = useState(false)
+  const videoRef = useRef<HTMLVideoElement>(null)
 
   useEffect(() => {
     const onScroll = () => document.documentElement.style.setProperty('--scroll-y', `${window.scrollY}px`)
@@ -22,13 +24,38 @@ export default function Page() {
     return () => window.removeEventListener('scroll', onScroll)
   }, [])
 
+  useEffect(() => {
+    if (videoRef.current) {
+      videoRef.current.defaultMuted = true
+      videoRef.current.muted = true
+      videoRef.current.play().catch(() => {})
+    }
+  }, [])
+
   return (
     <main className="site-shell">
+      <div className="video-background" aria-hidden="true">
+        <video
+          ref={videoRef}
+          autoPlay
+          muted
+          loop
+          playsInline
+          preload="auto"
+          className="video-bg-media"
+        >
+          <source src="/bg-video.mp4" type="video/mp4" />
+        </video>
+        <div className="video-overlay" />
+      </div>
+
       <header className="site-header">
-        <a className="wordmark" href="#top" aria-label="Varka home">VARKA</a>
+        <a className="brand-logo-link" href="#top" aria-label="Varka home">
+          <img src="/logo.png" alt="VARKA — Navigate Smarter" className="brand-logo-img" />
+        </a>
         <nav className={`nav-links ${menuOpen ? 'is-open' : ''}`} aria-label="Primary navigation">
           {navItems.map((item) => <a key={item.label} href={item.href} onClick={() => setMenuOpen(false)}>{item.label}</a>)}
-          <a className="nav-contact" href="#contact" onClick={() => setMenuOpen(false)}>OPTIMIZE YOUR VOYAGE <ArrowUpRight size={14} /></a>
+          <Link className="nav-contact" href="/signin" onClick={() => setMenuOpen(false)}>OPTIMIZE YOUR VOYAGE <ArrowUpRight size={14} /></Link>
         </nav>
         <button className="menu-toggle" type="button" aria-label={menuOpen ? 'Close menu' : 'Open menu'} aria-expanded={menuOpen} onClick={() => setMenuOpen(!menuOpen)}>
           {menuOpen ? <X size={20} /> : <Menu size={20} />}
@@ -41,10 +68,6 @@ export default function Page() {
           <h1>Make every<br />voyage <em>smarter.</em></h1>
           <p className="hero-intro">We turn freight volatility, port congestion, and vessel constraints into smarter logistics decisions.</p>
           <a className="circle-link" href="#solution" aria-label="Explore the solution"><span>Explore<br />the solution</span><ArrowDown size={18} /></a>
-        </div>
-        <div className="hero-art" aria-label="Abstract orange ribbon sculpture" role="img">
-          <div className="orb orb-one" /><div className="orb orb-two" /><div className="ribbon" /><div className="ribbon ribbon-small" />
-          <span className="art-caption">A study in<br />optimization / 01</span>
         </div>
         <div className="hero-meta"><span>01—04</span><span>EAST COAST INDIA / GLOBAL TRADE</span></div>
       </section>
@@ -97,8 +120,18 @@ export default function Page() {
           varka@gmail.com <ArrowUpRight size={24} />
         </a>
         <div className="contact-footer">
-          <span>© 2026 Varka</span>
-          <span>Instagram ↗</span>
+          <div className="contact-footer-brand">
+            <img src="/logo.png" alt="Varka logo" className="footer-logo-img" />
+            <span>© 2026 Varka</span>
+          </div>
+          <a
+            href="https://www.instagram.com/hellovarka"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="instagram-link"
+          >
+            Instagram ↗
+          </a>
         </div>
       </section>
     </main>
