@@ -293,7 +293,7 @@ node server.js
 ### `backend/.env`
 ```ini
 PORT=3030
-JWT_SECRET=varka_super_secret_jwt_key_2026_maritime
+JWT_SECRET=varka_super_secret_jwt_key_production_maritime
 CORS_ORIGIN=http://localhost:3000
 GEMINI_API_KEY=your_gemini_api_key_here
 ```

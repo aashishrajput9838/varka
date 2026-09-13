@@ -12,7 +12,6 @@ import LandedCostPanel from '@/components/dashboard/LandedCostPanel'
 import PortPredictionPanel from '@/components/dashboard/PortPredictionPanel'
 import VarkaIntelligence from '@/components/dashboard/varka-intelligence/VarkaIntelligence'
 import { NavSection, UserProfileData, VoyageData } from '@/components/dashboard/types'
-import { DEMO_VOYAGES } from '@/components/dashboard/mockData'
 
 const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3030'
 
@@ -21,9 +20,7 @@ export default function AuthenticatedDashboardPage() {
   const [currentUser, setCurrentUser] = useState<UserProfileData | null>(null)
   const [isValidatingSession, setIsValidatingSession] = useState(true)
   const [activeSection, setActiveSection] = useState<NavSection>('tracking')
-  const [currentVoyage, setCurrentVoyage] = useState<VoyageData>(
-    DEMO_VOYAGES['VRK-9021-IN']
-  )
+  const [currentVoyage, setCurrentVoyage] = useState<VoyageData | null>(null)
   const [isLoggingOut, setIsLoggingOut] = useState(false)
 
   // Validate authenticated session with backend on mount
@@ -162,10 +159,7 @@ export default function AuthenticatedDashboardPage() {
 
             {activeSection === 'history' && (
               <HistoryPanel
-                onLoadVoyageInTracking={(ref) => {
-                  if (DEMO_VOYAGES[ref]) {
-                    setCurrentVoyage(DEMO_VOYAGES[ref])
-                  }
+                onLoadVoyageInTracking={(_ref) => {
                   setActiveSection('tracking')
                 }}
               />
@@ -196,7 +190,7 @@ export default function AuthenticatedDashboardPage() {
           <footer className="varka-dashboard-footer">
             <div className="varka-footer-meta">
               <span>VARKA FREIGHT INTELLIGENCE • PREDICTION SE DECISION TAK</span>
-              <span>© 2026 VARKA PLATFORM</span>
+              <span>© {new Date().getFullYear()} VARKA PLATFORM</span>
             </div>
           </footer>
         </div>

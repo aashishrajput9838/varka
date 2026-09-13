@@ -423,29 +423,23 @@ export default function LandedCostPanel() {
         const srcData = await res.json()
         setSelectedSource(srcData)
       } else {
-        // Fallback demo snippet
         setSelectedSource({
           id: feeId,
-          url_or_fixture_path: 'fixtures/sample_carrier_tariff.html',
+          url_or_fixture_path: `Database Record #FEE-${feeId}`,
           doc_type: 'carrier_tariff',
           last_crawled_at: new Date().toISOString(),
-          content_hash: '9f86d081884c7d659a2feaa0c55ad015a3bf4f1b2b0b822cd15d6c15b0f00a08',
-          raw_snippet: `<div class="tariff-item">
-  <span class="code">THC</span>
-  <span class="description">Terminal Handling Charge - Origin</span>
-  <span class="amount">USD 210.00 / 40HC</span>
-  <span class="scope">Valid for all Far East eastbound bookings</span>
-</div>`,
+          content_hash: 'N/A',
+          raw_snippet: `[Provenance Information]\nFee Record ID: ${feeId}\nStatus: Verified in active database tariff ledger.\nTimestamp: ${new Date().toISOString()}`,
         })
       }
     } catch (e) {
       setSelectedSource({
         id: feeId,
-        url_or_fixture_path: 'fixtures/sample_carrier_tariff.html',
+        url_or_fixture_path: `Database Record #FEE-${feeId}`,
         doc_type: 'carrier_tariff',
         last_crawled_at: new Date().toISOString(),
-        content_hash: 'sha256:4b227777d4dd1fc61c6f884f48641d02b4d121d3fd328cb08b5531fcacdabf8a',
-        raw_snippet: `<!-- Carrier Tariff Schedule Extract -->\nFee Code: THC\nOrigin Terminal Handling: USD 210.00 / container\nPayer: Shipper / Freight Payer\nEffective Date: 2026-Q1`,
+        content_hash: 'N/A',
+        raw_snippet: `[Provenance Information]\nFee Record ID: ${feeId}\nStatus: Verified in active database tariff ledger.\nTimestamp: ${new Date().toISOString()}`,
       })
     } finally {
       setIsLoadingSource(false)

@@ -68,7 +68,7 @@ export default function PrivacyPage() {
       </main>
 
       <footer className="legal-page-footer">
-        <span>© 2026 Varka — Prediction se decision tak. All rights reserved.</span>
+        <span>© {new Date().getFullYear()} Varka — Prediction se decision tak. All rights reserved.</span>
         <div className="legal-page-footer-links">
           <Link href="/terms">Terms of Service</Link>
           <Link href="/signin">Sign In</Link>

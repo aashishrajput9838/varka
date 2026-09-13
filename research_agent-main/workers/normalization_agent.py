@@ -116,8 +116,8 @@ def normalize(raw_fee: Dict[str, Any], source_id: int, db: Optional[Session] = N
             currency=currency,
             unit=unit,
             applicability_conditions=conditions,
-            effective_date=date(2026, 1, 1),
-            expiry_date=date(2026, 12, 31),
+            effective_date=date(date.today().year, 1, 1),
+            expiry_date=date(date.today().year, 12, 31),
             confidence=confidence,
             source_reference=source_ref,
         )

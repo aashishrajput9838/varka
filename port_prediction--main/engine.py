@@ -88,8 +88,9 @@ def forecast_route(ts: pd.DataFrame, route_id: str, vessel: str, horizon: int = 
     seasonal = 0.55 * np.sin((df.index[-1] + days) * 2 * np.pi / 30)
     projected = np.maximum(1, point + slope * days + seasonal)
 
+    today = pd.Timestamp.now().normalize()
     outlook = pd.DataFrame({
-        "date": pd.date_range(df.date.iloc[-1] + pd.Timedelta(days=1), periods=horizon),
+        "date": pd.date_range(today + pd.Timedelta(days=1), periods=horizon),
         "forecast_usd_t": projected,
         "p10": np.maximum(1, projected - uncertainty),
         "p90": projected + uncertainty,

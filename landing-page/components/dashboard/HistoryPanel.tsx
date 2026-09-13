@@ -1,31 +1,51 @@
 'use client'
 
-import { useState, useMemo } from 'react'
+import { useState, useMemo, useEffect } from 'react'
 import {
   History,
   ArrowRight,
   Search,
-  ExternalLink,
-  RotateCcw,
+  Trash2,
   Inbox,
-  Filter,
+  Ship,
 } from 'lucide-react'
 import { HistoryItem, TrackingStatus } from './types'
-import { SAMPLE_HISTORY } from './mockData'
 
 interface HistoryPanelProps {
   onLoadVoyageInTracking: (trackingNumber: string) => void
 }
 
 export default function HistoryPanel({ onLoadVoyageInTracking }: HistoryPanelProps) {
-  const [items, setItems] = useState<HistoryItem[]>(SAMPLE_HISTORY)
+  const [items, setItems] = useState<HistoryItem[]>([])
   const [statusFilter, setStatusFilter] = useState<string>('ALL')
   const [searchQuery, setSearchQuery] = useState('')
-  const [showSimulatedEmpty, setShowSimulatedEmpty] = useState(false)
+
+  useEffect(() => {
+    try {
+      const stored = localStorage.getItem('varka_search_history')
+      if (stored) {
+        const parsed = JSON.parse(stored)
+        if (Array.isArray(parsed)) {
+          setItems(parsed)
+          return
+        }
+      }
+    } catch {
+      // ignore parse error
+    }
+    setItems([])
+  }, [])
+
+  const handleClearHistory = () => {
+    try {
+      localStorage.removeItem('varka_search_history')
+    } catch {
+      // ignore
+    }
+    setItems([])
+  }
 
   const filteredItems = useMemo(() => {
-    if (showSimulatedEmpty) return []
-
     return items.filter((item) => {
       const matchesStatus =
         statusFilter === 'ALL' || item.status === statusFilter
@@ -33,18 +53,18 @@ export default function HistoryPanel({ onLoadVoyageInTracking }: HistoryPanelPro
       const q = searchQuery.toLowerCase().trim()
       const matchesQuery =
         !q ||
-        item.trackingNumber.toLowerCase().includes(q) ||
-        item.origin.toLowerCase().includes(q) ||
-        item.destination.toLowerCase().includes(q) ||
-        item.vessel.toLowerCase().includes(q) ||
-        item.cargo.toLowerCase().includes(q)
+        (item.trackingNumber && item.trackingNumber.toLowerCase().includes(q)) ||
+        (item.origin && item.origin.toLowerCase().includes(q)) ||
+        (item.destination && item.destination.toLowerCase().includes(q)) ||
+        (item.vessel && item.vessel.toLowerCase().includes(q)) ||
+        (item.cargo && item.cargo.toLowerCase().includes(q))
 
       return matchesStatus && matchesQuery
     })
-  }, [items, statusFilter, searchQuery, showSimulatedEmpty])
+  }, [items, statusFilter, searchQuery])
 
   const filterTabs = [
-    { id: 'ALL', label: 'ALL VOYAGES', count: items.length },
+    { id: 'ALL', label: 'ALL INQUIRIES', count: items.length },
     {
       id: 'IN TRANSIT',
       label: 'IN TRANSIT',
@@ -84,51 +104,55 @@ export default function HistoryPanel({ onLoadVoyageInTracking }: HistoryPanelPro
         <div className="varka-history-top-row">
           <div className="varka-section-kicker-group">
             <History size={14} className="varka-rust-icon" />
-            <span className="varka-section-kicker">RECENT VOYAGES & AUDIT TRAIL</span>
+            <span className="varka-section-kicker">USER AUDIT TRAIL & RECENT INQUIRIES</span>
           </div>
 
-          <div className="varka-history-actions">
-            <button
-              type="button"
-              onClick={() => setShowSimulatedEmpty(!showSimulatedEmpty)}
-              className="varka-toggle-empty-btn"
-              title="Toggle empty state to preview design"
-            >
-              <RotateCcw size={12} />
-              <span>{showSimulatedEmpty ? 'Restore Sample Records' : 'Test Empty State'}</span>
-            </button>
-          </div>
+          {items.length > 0 && (
+            <div className="varka-history-actions">
+              <button
+                type="button"
+                onClick={handleClearHistory}
+                className="varka-toggle-empty-btn"
+                title="Clear local inquiry history"
+              >
+                <Trash2 size={12} />
+                <span>Clear History</span>
+              </button>
+            </div>
+          )}
         </div>
 
         {/* Filter Pills and Search */}
-        <div className="varka-history-filters-bar">
-          <div className="varka-history-tabs" role="tablist">
-            {filterTabs.map((tab) => (
-              <button
-                key={tab.id}
-                type="button"
-                role="tab"
-                aria-selected={statusFilter === tab.id}
-                onClick={() => setStatusFilter(tab.id)}
-                className={`varka-history-tab ${statusFilter === tab.id ? 'is-active' : ''}`}
-              >
-                <span>{tab.label}</span>
-                <span className="varka-tab-count">{tab.count}</span>
-              </button>
-            ))}
-          </div>
+        {items.length > 0 && (
+          <div className="varka-history-filters-bar">
+            <div className="varka-history-tabs" role="tablist">
+              {filterTabs.map((tab) => (
+                <button
+                  key={tab.id}
+                  type="button"
+                  role="tab"
+                  aria-selected={statusFilter === tab.id}
+                  onClick={() => setStatusFilter(tab.id)}
+                  className={`varka-history-tab ${statusFilter === tab.id ? 'is-active' : ''}`}
+                >
+                  <span>{tab.label}</span>
+                  <span className="varka-tab-count">{tab.count}</span>
+                </button>
+              ))}
+            </div>
 
-          <div className="varka-history-search-wrap">
-            <Search size={14} className="varka-subtle-icon" />
-            <input
-              type="text"
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-              placeholder="Filter by port, vessel, or reference..."
-              className="varka-history-search-input"
-            />
+            <div className="varka-history-search-wrap">
+              <Search size={14} className="varka-subtle-icon" />
+              <input
+                type="text"
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                placeholder="Filter by MMSI, vessel, or location..."
+                className="varka-history-search-input"
+              />
+            </div>
           </div>
-        </div>
+        )}
       </div>
 
       {/* History Items List or Empty State */}
@@ -137,20 +161,23 @@ export default function HistoryPanel({ onLoadVoyageInTracking }: HistoryPanelPro
           <div className="varka-empty-icon-wrap">
             <Inbox size={32} className="varka-rust-icon" />
           </div>
-          <h3 className="varka-empty-title">No tracking history found</h3>
+          <h3 className="varka-empty-title">
+            {items.length === 0 ? 'No Tracking History Recorded' : 'No Matching Records Found'}
+          </h3>
           <p className="varka-empty-desc">
-            {showSimulatedEmpty
-              ? 'You are viewing the simulated empty state. Tracking records and monitored voyages will automatically appear here once tracked.'
-              : `No tracked voyages matched your search query "${searchQuery}".`}
+            {items.length === 0
+              ? 'Vessels and shipment references you track will automatically be recorded here in your live session audit trail.'
+              : `No tracked records matched your search query "${searchQuery}".`}
           </p>
           <div className="varka-empty-actions">
-            {showSimulatedEmpty ? (
+            {items.length === 0 ? (
               <button
                 type="button"
-                onClick={() => setShowSimulatedEmpty(false)}
+                onClick={() => onLoadVoyageInTracking('')}
                 className="varka-secondary-btn"
               >
-                Restore Demo Voyages
+                <Ship size={14} style={{ marginRight: '6px' }} />
+                Track Live Vessel
               </button>
             ) : (
               <button
@@ -173,7 +200,7 @@ export default function HistoryPanel({ onLoadVoyageInTracking }: HistoryPanelPro
               <div className="varka-history-card-main">
                 {/* Reference and Status */}
                 <div className="varka-history-ref-row">
-                  <span className="varka-history-ref">{item.trackingNumber}</span>
+                  <span className="varka-history-ref">MMSI / REF: {item.trackingNumber}</span>
                   <span className="varka-dot-sep">•</span>
                   <span className="varka-history-vessel">{item.vessel}</span>
                   <div className="varka-history-status-wrap">
@@ -184,17 +211,17 @@ export default function HistoryPanel({ onLoadVoyageInTracking }: HistoryPanelPro
                 {/* Route corridor */}
                 <div className="varka-history-corridor-row">
                   <div className="varka-history-port">
-                    <span className="varka-port-code">{item.originCode}</span>
+                    <span className="varka-port-code">{item.originCode || 'LOC'}</span>
                     <strong className="varka-port-name">{item.origin}</strong>
                   </div>
 
                   <div className="varka-history-arrow-wrap">
-                    <span className="varka-corridor-distance">Direct Voyage</span>
+                    <span className="varka-corridor-distance">Direct Tracking</span>
                     <ArrowRight size={16} className="varka-rust-icon" />
                   </div>
 
                   <div className="varka-history-port is-dest">
-                    <span className="varka-port-code">{item.destinationCode}</span>
+                    <span className="varka-port-code">{item.destinationCode || 'DEST'}</span>
                     <strong className="varka-port-name">{item.destination}</strong>
                   </div>
                 </div>
@@ -202,11 +229,11 @@ export default function HistoryPanel({ onLoadVoyageInTracking }: HistoryPanelPro
                 {/* Meta details */}
                 <div className="varka-history-meta-row">
                   <div className="varka-meta-pill">
-                    <span className="varka-meta-label">CARGO:</span>
+                    <span className="varka-meta-label">VESSEL CLASS:</span>
                     <span className="varka-meta-val">{item.cargo}</span>
                   </div>
                   <div className="varka-meta-pill">
-                    <span className="varka-meta-label">VOLUME:</span>
+                    <span className="varka-meta-label">SOURCE:</span>
                     <span className="varka-meta-val">{item.volume}</span>
                   </div>
                   <div className="varka-meta-pill">
@@ -214,7 +241,7 @@ export default function HistoryPanel({ onLoadVoyageInTracking }: HistoryPanelPro
                     <span className="varka-meta-val">{item.date}</span>
                   </div>
                   <div className="varka-meta-pill">
-                    <span className="varka-meta-label">ETA:</span>
+                    <span className="varka-meta-label">STATUS:</span>
                     <span className="varka-meta-val is-accent">{item.eta}</span>
                   </div>
                 </div>
@@ -226,9 +253,9 @@ export default function HistoryPanel({ onLoadVoyageInTracking }: HistoryPanelPro
                   type="button"
                   onClick={() => onLoadVoyageInTracking(item.trackingNumber)}
                   className="varka-view-voyage-btn"
-                  title={`Load ${item.trackingNumber} into Tracking`}
+                  title={`Track ${item.vessel}`}
                 >
-                  <span>View in Tracking</span>
+                  <span>Inspect Vessel</span>
                   <ArrowRight size={14} />
                 </button>
               </div>
@@ -239,7 +266,7 @@ export default function HistoryPanel({ onLoadVoyageInTracking }: HistoryPanelPro
 
       {/* Footer notice */}
       <div className="varka-history-footer-notice">
-        <span>Historical logs preserved for supply chain audits and freight tariff reconciliations.</span>
+        <span>Active user inquiries synchronized locally for real-time auditability.</span>
       </div>
     </div>
   )

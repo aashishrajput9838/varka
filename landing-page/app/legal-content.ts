@@ -1,6 +1,8 @@
+const currentMonthYear = new Date().toLocaleDateString('en-US', { month: 'long', year: 'numeric' })
+
 export const termsOfService = {
   title: 'Terms of Service',
-  lastUpdated: 'September 2026',
+  lastUpdated: currentMonthYear,
   intro: 'Welcome to VARKA. These Terms of Service govern your access to and use of the VARKA platform, including its freight forecasting, analytics, and optimization features.',
   sections: [
     {
@@ -58,7 +60,7 @@ export const termsOfService = {
 
 export const privacyPolicy = {
   title: 'Privacy Policy',
-  lastUpdated: 'September 2026',
+  lastUpdated: currentMonthYear,
   intro: 'VARKA respects your privacy and is committed to protecting the information you provide while using our platform.',
   sections: [
     {

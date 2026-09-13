@@ -112,7 +112,17 @@ export const getDefaultContext = (user: {
   id: string;
   name?: string | undefined;
   email: string;
-}): VarkaOperationalContext => ({
+}): VarkaOperationalContext => {
+  const now = new Date();
+  const dep = new Date(now.getTime() - 24 * 3600 * 1000);
+  const eta = new Date(now.getTime() + 5 * 24 * 3600 * 1000);
+  const laycan = new Date(now.getTime() + 14 * 24 * 3600 * 1000);
+
+  const depStr = dep.toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' }) + ', 06:30 IST';
+  const etaStr = eta.toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' }) + ', 14:00 IST';
+  const laycanStr = laycan.toISOString().split('T')[0] ?? '';
+
+  return {
   user: {
     id: user.id,
     name: user.name || (user.email ? user.email.split('@')[0] : 'Charterer') || 'Charterer',
@@ -120,7 +130,7 @@ export const getDefaultContext = (user: {
     role: 'Charterer / Freight Operations Lead',
   },
   currentPage: 'tracking',
-  lastUpdated: new Date().toISOString(),
+  lastUpdated: now.toISOString(),
   voyage: {
     voyageId: 'VRK-9021-IN',
     vesselName: 'M/V Ocean Sentinel',
@@ -130,8 +140,8 @@ export const getDefaultContext = (user: {
     originCode: 'INBOM',
     destinationPort: 'Chennai (Port Trust East Quay)',
     destinationCode: 'INMAA',
-    departureDate: '12 Sep 2026, 06:30 IST',
-    eta: '18 Sep 2026, 14:00 IST',
+    departureDate: depStr,
+    eta: etaStr,
     status: 'IN TRANSIT',
     cargoType: 'Clean Industrial Bulk & Specialty Alloys',
     volume: '450 MT',
@@ -155,7 +165,7 @@ export const getDefaultContext = (user: {
     selectedVessel: 'Panamax',
     cargoMt: 55000,
     commodity: 'Thermal coal',
-    laycanDate: '2026-10-03',
+    laycanDate: laycanStr,
     congestionScenario: 45,
     optimizationPriority: 'Balanced',
     currentRateUsdMt: 13.99,
@@ -232,13 +242,14 @@ export const getDefaultContext = (user: {
     recentRoutes: ['INBOM → INMAA', 'AUNTL → INPAR', 'SGSIN → INVIZ', 'AUNTL → INDHM'],
   },
   recentEvents: [
-    'Vessel departed Nhava Sheva on schedule (12 Sep 06:30 IST)',
+    `Vessel departed Nhava Sheva on schedule (${depStr})`,
     'Paradip pre-berthing queue updated: 1.5 baseline days delay',
     'Open-Meteo Bay of Bengal wave height updated to 1.8m (Moderate)',
     'XGBoost 60-day freight forecast generated: $13.99/MT for Panamax',
     'JIT digital twin computed slow-steaming speed: 10.8 kn (52 hrs wait avoided)',
   ],
-});
+  };
+};
 
 export class VarkaContextService {
   /**

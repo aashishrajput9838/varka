@@ -174,7 +174,7 @@ export default function MarketingLandingPage() {
         <div className="contact-footer">
           <div className="contact-footer-brand">
             <img src="/logo.png" alt="Varka logo" className="footer-logo-img" />
-            <span>© 2026 Varka — Prediction se decision tak</span>
+            <span>© {new Date().getFullYear()} Varka — Prediction se decision tak</span>
           </div>
           <a
             href="https://www.instagram.com/hellovarka"

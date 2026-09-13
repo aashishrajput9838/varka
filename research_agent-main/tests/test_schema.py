@@ -15,8 +15,8 @@ def test_canonical_fee_valid():
         currency="USD",
         unit="per_container",
         applicability_conditions="Export terminal handling",
-        effective_date=date(2026, 1, 1),
-        expiry_date=date(2026, 12, 31),
+        effective_date=date(date.today().year, 1, 1),
+        expiry_date=date(date.today().year, 12, 31),
         confidence=0.95,
         source_reference="Tariff Document #123",
     )

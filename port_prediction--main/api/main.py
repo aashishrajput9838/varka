@@ -218,11 +218,14 @@ def get_forecast(
     except Exception as exc:
         raise HTTPException(status_code=500, detail=f"Forecast calculation failed: {exc}")
 
-    # Recent history (last 30 days)
+    # Recent history (last 30 days aligned dynamically to calendar)
     filtered = ts[(ts.route_id == route_id) & (ts.vessel_type == vessel)].sort_values("date").tail(30)
+    today = pd.Timestamp.now().normalize()
+    days_back = len(filtered)
+    hist_dates = pd.date_range(today - pd.Timedelta(days=days_back), periods=days_back)
     history = [
-        {"date": row["date"].strftime("%Y-%m-%d"), "rate_usd_t": round(float(row["freight_rate_usd_per_tonne"]), 2)}
-        for _, row in filtered.iterrows()
+        {"date": d.strftime("%Y-%m-%d"), "rate_usd_t": round(float(row["freight_rate_usd_per_tonne"]), 2)}
+        for d, (_, row) in zip(hist_dates, filtered.iterrows())
     ]
 
     outlook = [

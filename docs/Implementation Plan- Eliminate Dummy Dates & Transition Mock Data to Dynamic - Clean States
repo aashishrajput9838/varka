@@ -1,0 +1,59 @@
+# Implementation Plan: Eliminate Dummy Dates & Transition Mock Data to Dynamic / Clean States
+
+Update all hardcoded static dates (e.g., `'2026-10-03'`, `'12 Sep 2026'`) to live dynamic timestamps relative to the current real-time system clock, and transition mock/sample records across the dashboard to clean, user-driven, or persistent local storage states.
+
+## User Review Required
+
+> [!IMPORTANT]
+> - All date pickers (such as Port Prediction Laycan Date) will now dynamically default to a realistic forward-looking commercial date (e.g. today + 14 days in `YYYY-MM-DD`) calculated at runtime using `new Date()`.
+> - The Tracking Search and History panels will support clean empty states when no user searches exist, rather than forcing static dummy history.
+> - Any reference demo voyages will compute real-time relative departure, current waypoint, and ETA timestamps dynamically (e.g. `Departed 2 days ago`, `ETA in 4 days`).
+> - Copyright & legal notices will use `new Date().getFullYear()` and dynamic current month/year strings.
+
+---
+
+## Proposed Changes
+
+### Dashboard & Panels
+
+#### [MODIFY] [PortPredictionPanel.tsx](file:///c:/github/varka/varka/landing-page/components/dashboard/PortPredictionPanel.tsx)
+- Replace static `useState<string>('2026-10-03')` for `laycanDate` with a dynamic helper `getSuggestedLaycanDate()` defaulting to 14 days from `Date.now()`.
+- Ensure all laycan calculations and scenario projections dynamically align with the selected/current date.
+
+#### [MODIFY] [mockData.ts](file:///c:/github/varka/varka/landing-page/components/dashboard/mockData.ts)
+- Replace hardcoded static date strings (`12 Sep 2026`, `24 Aug 2026`, etc.) with helper functions `getRelativeDateStr(daysOffset, hours, minutes)` and `getRelativeIsoDate(daysOffset)`.
+- Ensure all voyage departures, waypoints, and ETAs always display realistic, current timestamps regardless of when the platform is loaded.
+- Make `SAMPLE_HISTORY` dates dynamically relative to current time.
+
+#### [MODIFY] [HistoryPanel.tsx](file:///c:/github/varka/varka/landing-page/components/dashboard/HistoryPanel.tsx)
+- Support user-generated search history stored in `localStorage` (`varka_search_history`).
+- Provide an elegant empty state if no history exists, with a one-click button to load dynamic recent examples if the user wants to test.
+
+#### [MODIFY] [TrackingPanel.tsx](file:///c:/github/varka/varka/landing-page/components/dashboard/TrackingPanel.tsx)
+- Ensure tracking timestamps are rendered with dynamic relative times.
+- Update quick-reference pills to dynamically populated real references.
+
+#### [MODIFY] [legal-content.ts](file:///c:/github/varka/varka/landing-page/app/legal-content.ts)
+- Replace static `'September 2026'` with dynamic date formatting.
+
+#### [MODIFY] [Marketing and Shell Pages](file:///c:/github/varka/varka/landing-page/app/landing/page.tsx)
+- Ensure footer copyright years use dynamic `new Date().getFullYear()` across [page.tsx](file:///c:/github/varka/varka/landing-page/app/page.tsx), [landing/page.tsx](file:///c:/github/varka/varka/landing-page/app/landing/page.tsx), [privacy/page.tsx](file:///c:/github/varka/varka/landing-page/app/privacy/page.tsx), and [terms/page.tsx](file:///c:/github/varka/varka/landing-page/app/terms/page.tsx).
+
+---
+
+## Verification Plan
+
+### Automated / Build Verification
+- Run Next.js type-checking / build check:
+  ```powershell
+  cd c:\github\varka\varka\landing-page
+  npm run build
+  ```
+  *(or verify no runtime TypeScript errors occur in Next.js dev server).*
+
+### Manual & Visual Verification
+- Open `http://localhost:3000` in the browser subagent:
+  1. Inspect **Port Prediction** laycan input: verify it displays a dynamic valid future date (e.g. today + 14 days), not `2026-10-03`.
+  2. Inspect **Tracking Panel**: verify departure date, waypoints, and ETA reflect current, fresh dates.
+  3. Inspect **History Panel**: verify empty / dynamic state.
+  4. Inspect footer / copyright: verify dynamic current year.

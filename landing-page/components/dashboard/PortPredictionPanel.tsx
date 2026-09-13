@@ -77,7 +77,11 @@ export default function PortPredictionPanel({
   const [cargoMt, setCargoMt] = useState<number>(55000)
   const [commodity, setCommodity] = useState<string>('Thermal coal')
   const [charterStrategy, setCharterStrategy] = useState<number>(1) // 1 = Spot, 3 = 3-voyage, 6 = 6-voyage
-  const [laycanDate, setLaycanDate] = useState<string>('2026-10-03')
+  const [laycanDate, setLaycanDate] = useState<string>(() => {
+    const d = new Date()
+    d.setDate(d.getDate() + 14)
+    return d.toISOString().split('T')[0]
+  })
   const [congestion, setCongestion] = useState<number>(45)
   const [priority, setPriority] = useState<string>('Balanced')
 
@@ -1057,7 +1061,7 @@ export default function PortPredictionPanel({
       return auditTrail
     }
     return [
-      { audit_field: 'Decision timestamp', recorded_value: '2026-09-12 22:50 UTC' },
+      { audit_field: 'Decision timestamp', recorded_value: new Date().toISOString().replace('T', ' ').substring(0, 16) + ' UTC' },
       { audit_field: 'Route / parcel', recorded_value: `${selectedRouteId} · ${cargoMt.toLocaleString()} MT` },
       { audit_field: 'Selected vessel', recorded_value: selectedVessel },
       { audit_field: 'Optimization priority', recorded_value: priority },
