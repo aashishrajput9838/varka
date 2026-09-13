@@ -1,5 +1,11 @@
 <div align="center">
 
+<picture>
+  <source media="(prefers-color-scheme: dark)" srcset="docs/assets/logo.png">
+  <source media="(prefers-color-scheme: light)" srcset="docs/assets/logo-original.png">
+  <img src="docs/assets/logo.png" alt="VARKA — Navigate Smarter" width="280">
+</picture>
+
 # ⚓ VARKA
 ### *Prediction se decision tak — Make every voyage smarter*
 
