@@ -4,8 +4,8 @@ const cors = require('cors');
 const WebSocket = require('ws');
 const path = require('path');
 
-const PORT = process.env.PORT || 3000;
-const AISSTREAM_API_KEY = process.env.AISSTREAM_API_KEY;
+const PORT = process.env.PORT || 3001;
+const AISSTREAM_API_KEY = process.env.AISSTREAM_API_KEY || 'a15a7c25edeefff7b1028f7dbb17e5ab5ff9f9af';
 const AISSTREAM_URL = 'wss://stream.aisstream.io/v0/stream';
 
 // Miami-ish default bounding box (kept from the original spec) — edit to your area of interest.
@@ -195,8 +195,8 @@ app.get('/health', (req, res) => {
 });
 
 function startServer(portToTry) {
-  const server = app.listen(portToTry, () => {
-    console.log(`Ship tracker live server listening on http://localhost:${portToTry}`);
+  const server = app.listen(portToTry, '0.0.0.0', () => {
+    console.log(`Ship tracker live server listening on port ${portToTry}`);
   });
 
   server.on('error', (err) => {

@@ -131,13 +131,17 @@ export default function TrackingPanel({
   const [liveShips, setLiveShips] = useState<AisRawShip[]>([])
   const [radarStatus, setRadarStatus] = useState<'connecting' | 'connected' | 'offline'>('connecting')
 
+  const getTrackingApiUrl = () => {
+    return process.env.NEXT_PUBLIC_SHIP_TRACKING_URL?.replace(/\/$/, '') || 'http://localhost:3001'
+  }
+
   // Load real-time ships from ship-tracking module (port 3001)
   useEffect(() => {
     let isMounted = true
 
     const fetchLiveRadar = async () => {
       try {
-        const res = await fetch('http://localhost:3001/api/ships')
+        const res = await fetch(`${getTrackingApiUrl()}/api/ships`)
         if (res.ok) {
           const json = await res.json()
           if (json.data && Array.isArray(json.data) && json.data.length > 0) {
@@ -237,7 +241,7 @@ export default function TrackingPanel({
 
     // Attempt direct server query for MMSI
     try {
-      const res = await fetch(`http://localhost:3001/api/ships/${encodeURIComponent(query)}`)
+      const res = await fetch(`${getTrackingApiUrl()}/api/ships/${encodeURIComponent(query)}`)
       if (res.ok) {
         const ship = await res.json()
         const mapped = mapAisShipToVoyage(ship)
