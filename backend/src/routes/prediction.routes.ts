@@ -115,4 +115,34 @@ router.get("/scorecard", (req: Request, res: Response) => {
   return proxyToPython("/api/v1/ports/scorecard", "GET", req, res);
 });
 
+// Grounded Charter Assistant
+router.post("/assistant", (req: Request, res: Response) => {
+  return proxyToPython("/api/v1/assistant/query", "POST", req, res);
+});
+
+// Freight rate scenario stress testing
+router.post("/scenarios", (req: Request, res: Response) => {
+  return proxyToPython("/api/v1/scenarios", "POST", req, res);
+});
+
+// Fleet availability roster
+router.get("/fleet", (req: Request, res: Response) => {
+  return proxyToPython("/api/v1/fleet/availability", "GET", req, res);
+});
+
+// Risk cockpit drivers breakdown
+router.post("/risk-cockpit", (req: Request, res: Response) => {
+  return proxyToPython("/api/v1/risk/cockpit", "POST", req, res);
+});
+
+// Governed decision audit trail
+router.post("/audit", (req: Request, res: Response) => {
+  return proxyToPython("/api/v1/decision/audit", "POST", req, res);
+});
+
+// Standards mapping (DCSA / IMO)
+router.get("/standards", (req: Request, res: Response) => {
+  return proxyToPython("/api/v1/standards/mapping", "GET", req, res);
+});
+
 export default router;

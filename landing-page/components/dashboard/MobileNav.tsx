@@ -1,7 +1,23 @@
 'use client'
 
 import { useState, useEffect } from 'react'
-import { Menu, X, Compass, History, Sparkles, TrendingUp } from 'lucide-react'
+import {
+  Menu,
+  X,
+  Compass,
+  History,
+  Sparkles,
+  TrendingUp,
+  ShieldCheck,
+  MessageSquareCode,
+  Award,
+  Gauge,
+  Zap,
+  SlidersHorizontal,
+  Ship,
+  ShieldAlert,
+  FileCheck2,
+} from 'lucide-react'
 import { NavSection, UserProfileData } from './types'
 import UserProfile from './UserProfile'
 
@@ -53,6 +69,66 @@ export default function MobileNav({
       icon: Compass,
     },
     {
+      id: 'cockpit' as NavSection,
+      label: 'CHARTER COCKPIT',
+      subtitle: 'Approval & early alerts',
+      icon: ShieldCheck,
+    },
+    {
+      id: 'optimizer' as NavSection,
+      label: 'VESSEL OPTIMIZER',
+      subtitle: 'Multi-objective ranking',
+      icon: Gauge,
+    },
+    {
+      id: 'jit' as NavSection,
+      label: 'JIT DIGITAL TWIN',
+      subtitle: 'Slow steaming & CO₂',
+      icon: Zap,
+    },
+    {
+      id: 'prediction' as NavSection,
+      label: 'PORT FORECAST',
+      subtitle: 'ML rates & XAI drivers',
+      icon: TrendingUp,
+    },
+    {
+      id: 'scenarios' as NavSection,
+      label: 'SCENARIO STUDIO',
+      subtitle: 'Market stress test',
+      icon: SlidersHorizontal,
+    },
+    {
+      id: 'scorecard' as NavSection,
+      label: 'PORT SCORECARD',
+      subtitle: 'Indian port benchmarks',
+      icon: Award,
+    },
+    {
+      id: 'fleet' as NavSection,
+      label: 'FLEET & MULTI-VOYAGE',
+      subtitle: 'Rosters & multi-trip',
+      icon: Ship,
+    },
+    {
+      id: 'risk' as NavSection,
+      label: 'RISK & AUDIT',
+      subtitle: 'Composite risk & log',
+      icon: ShieldAlert,
+    },
+    {
+      id: 'standards' as NavSection,
+      label: 'STANDARDS & DATA',
+      subtitle: 'DCSA / IMO & APIs',
+      icon: FileCheck2,
+    },
+    {
+      id: 'assistant' as NavSection,
+      label: 'CHARTER ASSISTANT',
+      subtitle: 'Grounded AI advisory',
+      icon: MessageSquareCode,
+    },
+    {
       id: 'history' as NavSection,
       label: 'HISTORY',
       subtitle: 'Previous voyages',
@@ -63,12 +139,6 @@ export default function MobileNav({
       label: 'AGENT',
       subtitle: 'Cost intelligence',
       icon: Sparkles,
-    },
-    {
-      id: 'prediction' as NavSection,
-      label: 'PORT FORECAST',
-      subtitle: 'ML rates & JIT twin',
-      icon: TrendingUp,
     },
   ]
 

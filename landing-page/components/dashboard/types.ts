@@ -1,4 +1,81 @@
-export type NavSection = 'tracking' | 'history' | 'agent' | 'prediction'
+export type NavSection =
+  | 'tracking'
+  | 'history'
+  | 'agent'
+  | 'prediction'
+  | 'cockpit'
+  | 'assistant'
+  | 'scorecard'
+  | 'optimizer'
+  | 'jit'
+  | 'scenarios'
+  | 'fleet'
+  | 'risk'
+  | 'standards'
+
+export interface FleetRosterItem {
+  vessel_type: string
+  available_hulls: number
+  next_available_days: number
+  availability_status: string
+  data_status: string
+}
+
+export interface RiskDetailItem {
+  risk_driver: string
+  score: number
+  level: string
+  recommended_mitigation: string
+}
+
+export interface AuditItem {
+  audit_field: string
+  recorded_value: string
+}
+
+export interface StandardsMappingItem {
+  dashboard_field: string
+  'standards-ready representation': string
+  'production source': string
+}
+
+export interface EarlyWarningAlert {
+  severity: 'Critical' | 'Warning' | 'Info'
+  alert: string
+  evidence: string
+  action: string
+}
+
+export interface AssistantMessage {
+  id: string
+  role: 'user' | 'assistant'
+  content: string
+  timestamp: string
+}
+
+export interface PortScorecardItem {
+  rank: number
+  port_code: string
+  port_name: string
+  dry_bulk_berths: number
+  cargo_handling_rate_tpd: number
+  avg_pre_berthing_delay_days: number
+  estimated_port_days: number
+  port_performance_score: number
+}
+
+export interface ScenarioSummaryItem {
+  scenario: string
+  lowest_rate: number
+  average_rate: number
+  cargo_cost_at_average: number
+}
+
+export interface ScenarioDataPoint {
+  date: string
+  scenario: string
+  rate_usd_mt: number
+}
 
 export interface PortOrigin {
   port_code: string
@@ -104,6 +181,7 @@ export interface VesselFeasibilityClass {
   utilisation: number
   forecast_rate_usd_t: number
   total_freight_usd: number
+  voyage_co2_tonnes?: number
   available_hulls: number
   next_available_days: number
   availability_status: string
@@ -116,6 +194,12 @@ export interface VesselOptimizationResponse {
   cargo_mt: number
   priority: string
   recommended_vessel: string
+  recommended_score?: number
+  expected_freight?: number
+  total_freight?: number
+  voyage_co2_tonnes?: number
+  fleet_readiness_days?: number
+  availability_status?: string
   vessel_classes: VesselFeasibilityClass[]
 }
 
@@ -150,15 +234,24 @@ export interface CharterStrategyResponse {
   vessel_type: string
   cargo_mt: number
   laycan_days: number
+  laycan_date?: string
   risk_index: number
+  load_days?: number
+  discharge_days?: number
+  port_days?: number
+  sailing_days?: number
   cycle_days: number
   posture: string
   action: string
   rationale: string
   expected_cost: number
   expected_saving: number
+  mape_pct?: number
+  volatility_pct?: number
+  entry_date?: string
   protections: string[]
   scenarios: CharterScenario[]
+  alerts?: EarlyWarningAlert[]
 }
 
 export type TrackingStatus = 'IN TRANSIT' | 'AT PORT' | 'DEPARTED' | 'ESTIMATED ARRIVAL' | 'COMPLETED'

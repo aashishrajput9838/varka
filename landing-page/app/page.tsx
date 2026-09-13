@@ -171,7 +171,21 @@ export default function AuthenticatedDashboardPage() {
 
             {activeSection === 'agent' && <AgentPanel />}
 
-            {activeSection === 'prediction' && <PortPredictionPanel />}
+            {(activeSection === 'prediction' ||
+              activeSection === 'cockpit' ||
+              activeSection === 'assistant' ||
+              activeSection === 'scorecard' ||
+              activeSection === 'optimizer' ||
+              activeSection === 'jit' ||
+              activeSection === 'scenarios' ||
+              activeSection === 'fleet' ||
+              activeSection === 'risk' ||
+              activeSection === 'standards') && (
+              <PortPredictionPanel
+                activeSection={activeSection}
+                onSelectSection={setActiveSection}
+              />
+            )}
           </div>
 
           {/* Footer note */}
