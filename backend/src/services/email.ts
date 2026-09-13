@@ -56,6 +56,16 @@ const printConsoleOtp = (to: string, purpose: string, otp: string, firstName?: s
   console.log(`└────────────────────────────────────────────────────────────┘\n`);
 };
 
+export const getSmtpStatus = () => {
+  return {
+    configured: Boolean(hasRealSmtp && transporter && smtpUser),
+    host: smtpHost || "smtp.gmail.com",
+    port: smtpPort || 465,
+    userConfigured: Boolean(smtpUser),
+    senderConfigured: Boolean(emailFrom || smtpUser),
+  };
+};
+
 export const sendVerificationEmail = async (
   to: string,
   firstName: string,
@@ -64,6 +74,7 @@ export const sendVerificationEmail = async (
   printConsoleOtp(to, "Email Address Verification", otp, firstName);
 
   if (!hasRealSmtp || !transporter || !smtpUser) {
+    console.warn(`[EMAIL SERVICE] Email not sent to ${to}: SMTP credentials not configured. Please set SMTP_USER and SMTP_PASS on Railway.`);
     return { sent: false, reason: "SMTP simulated/unconfigured" };
   }
 
@@ -245,6 +256,7 @@ export const sendPasswordResetEmail = async (
   printConsoleOtp(to, "Password Reset Request", otp, firstName);
 
   if (!hasRealSmtp || !transporter || !smtpUser) {
+    console.warn(`[EMAIL SERVICE] Email not sent to ${to}: SMTP credentials not configured. Please set SMTP_USER and SMTP_PASS on Railway.`);
     return { sent: false, reason: "SMTP simulated/unconfigured" };
   }
 

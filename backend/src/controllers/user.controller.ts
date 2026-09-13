@@ -86,9 +86,15 @@ export const registerUser = async (req: Request, res: Response) => {
     }
 
     // Asynchronously dispatch email without blocking response
-    sendVerificationEmail(normalizedEmail, firstName.trim(), otp).catch((err) => {
-      console.error("[EMAIL SERVICE] Async dispatch error:", err);
-    });
+    sendVerificationEmail(normalizedEmail, firstName.trim(), otp)
+      .then((result) => {
+        if (!result.sent) {
+          console.warn(`[AUTH SERVICE] Email to ${normalizedEmail} was not sent: ${result.reason}`);
+        }
+      })
+      .catch((err) => {
+        console.error("[EMAIL SERVICE] Async dispatch error:", err);
+      });
 
     return res.status(200).json({
       success: true,
@@ -274,9 +280,15 @@ export const loginUser = async (req: Request, res: Response) => {
       user.emailVerificationExpires = new Date(Date.now() + 10 * 60 * 1000);
       await user.save();
 
-      sendVerificationEmail(normalizedEmail, user.firstName, otp).catch((err) => {
-        console.error("[EMAIL SERVICE] Async dispatch error:", err);
-      });
+      sendVerificationEmail(normalizedEmail, user.firstName, otp)
+        .then((result) => {
+          if (!result.sent) {
+            console.warn(`[AUTH SERVICE] Resend email to ${normalizedEmail} was not sent: ${result.reason}`);
+          }
+        })
+        .catch((err) => {
+          console.error("[EMAIL SERVICE] Async dispatch error:", err);
+        });
 
       return res.status(403).json({
         success: false,

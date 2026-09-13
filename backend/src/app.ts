@@ -3,6 +3,7 @@ import cors from "cors";
 import cookieParser from "cookie-parser";
 import userRouter from "./routes/user.routes.js";
 import predictionRouter from "./routes/prediction.routes.js";
+import { getSmtpStatus } from "./services/email.js";
 
 const app = express();
 
@@ -37,6 +38,7 @@ app.get("/health", (req: Request, res: Response) => {
   res.status(200).json({
     status: "ok",
     timestamp: new Date().toISOString(),
+    smtp: getSmtpStatus(),
   });
 });
 
