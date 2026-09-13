@@ -1,0 +1,129 @@
+# Integration Plan: Port Prediction ML Engine into Varka Platform
+
+Integrate the existing `port_prediction--main` dry-bulk freight forecasting and vessel optimization engine into the Varka platform. This exposes real-time XGBoost 60-day freight forecasts, Open-Meteo marine wave conditions, port feasibility constraints, JIT slow-steaming decarbonization, and commercial charter strategies directly into a new **PORT FORECAST** module on the authenticated homepage.
+
+---
+
+## User Review Required
+
+> [!IMPORTANT]
+> **Architecture & Security Boundaries**:
+> - **Python FastAPI ML Service** runs on `http://127.0.0.1:8000` loading models and datasets once at startup.
+> - **Node.js Express Backend** (`http://localhost:3030`) acts as the secure gateway, protecting all prediction APIs with the existing `authMiddleware`.
+> - **Next.js Frontend** (`http://localhost:3000`) calls only `http://localhost:3030/api/v1/prediction/*` and never connects directly to Python.
+> - **Zero Synthetic/Faked APIs**: The forecast, drivers, feasibility, JIT savings, and marine wave data strictly call the real Python engine and live Open-Meteo APIs.
+
+---
+
+## Proposed Changes
+
+### 1. Python FastAPI Microservice (`port_prediction--main/`)
+
+#### [NEW] [port_prediction--main/api/main.py](file:///c:/github/varka/varka/port_prediction--main/api/main.py)
+- FastAPI application running on `http://127.0.0.1:8000`.
+- Loads the 29.8 MB timeseries dataset, ports, vessels, and routes **once at startup** into an in-memory cache to guarantee high API performance.
+- Endpoints:
+  - `GET /health`: Health status.
+  - `GET /api/v1/routes`: Returns list of origins, destinations, vessels, and valid route mappings.
+  - `GET /api/v1/predict/forecast`: Executes the existing `forecast_route` XGBoost model for a given `route_id` and `vessel` with 60-day horizon, returning `current_rate_usd_t`, `uncertainty_band_usd_t`, `outlook` (P10, P90, projected rates), and `drivers` (feature impacts).
+  - `GET /api/v1/live/marine`: Calls `marine_risk(port_code)` in `live_data.py` to retrieve real-time wave height, wind-wave height, and sea risk level from Open-Meteo.
+  - `POST /api/v1/plan/jit`: Calls `just_in_time_plan` to calculate slow-steaming speed, hours avoided at anchorage, fuel saved (MT), and CO₂ emissions reduced.
+  - `POST /api/v1/optimize/vessel`: Calls `feasible` and `optimize_vessels` to check draft, LOA, beam, and DWT utilization across origin & destination.
+  - `POST /api/v1/strategy/charter`: Calls `recommend_strategy` to generate contract scenario recommendations (1, 3, 6-voyage coverage).
+
+---
+
+### 2. Node.js Express Authenticated Gateway (`backend/`)
+
+#### [NEW] [backend/src/routes/prediction.routes.ts](file:///c:/github/varka/varka/backend/src/routes/prediction.routes.ts)
+- Express router protected by the existing `authMiddleware`.
+- Proxies requests to `PYTHON_API_URL` (`http://127.0.0.1:8000`):
+  - `GET /routes` $\to$ `GET /api/v1/routes`
+  - `GET /forecast` $\to$ `GET /api/v1/predict/forecast`
+  - `GET /live-marine` $\to$ `GET /api/v1/live/marine`
+  - `POST /jit` $\to$ `POST /api/v1/plan/jit`
+  - `POST /optimize-vessel` $\to$ `POST /api/v1/optimize/vessel`
+  - `POST /strategy` $\to$ `POST /api/v1/strategy/charter`
+- Gracefully handles Python service unreachability and returns clean, structured error responses (`Prediction service unavailable`).
+
+#### [MODIFY] [backend/src/app.ts](file:///c:/github/varka/varka/backend/src/app.ts)
+- Mount `predictionRouter` under `/api/v1/prediction`.
+
+#### [MODIFY] [backend/.env](file:///c:/github/varka/varka/backend/.env)
+- Add `PYTHON_API_URL=http://127.0.0.1:8000`.
+
+---
+
+### 3. Frontend Next.js Dashboard (`landing-page/`)
+
+#### [MODIFY] [landing-page/components/dashboard/types.ts](file:///c:/github/varka/varka/landing-page/components/dashboard/types.ts)
+- Expand `NavSection` to include `'prediction'`:
+  ```typescript
+  export type NavSection = 'tracking' | 'history' | 'agent' | 'prediction'
+  ```
+- Add strongly typed interfaces for `RouteOption`, `PortOption`, `ForecastResponse`, `MarineRiskResponse`, `JitPlanResponse`, and `FeasibilityResult`.
+
+#### [MODIFY] [landing-page/components/dashboard/Sidebar.tsx](file:///c:/github/varka/varka/landing-page/components/dashboard/Sidebar.tsx)
+- Add `PORT FORECAST` navigation button:
+  - ID: `'prediction'`
+  - Label: `'PORT FORECAST'`
+  - Subtitle: `'East Coast bulk rates & JIT'`
+  - Icon: `TrendingUp` from `lucide-react`
+  - Badge: `'ML'`
+
+#### [MODIFY] [landing-page/components/dashboard/MobileNav.tsx](file:///c:/github/varka/varka/landing-page/components/dashboard/MobileNav.tsx)
+- Add `PORT FORECAST` navigation link to the mobile off-canvas drawer.
+
+#### [MODIFY] [landing-page/components/dashboard/DashboardHeader.tsx](file:///c:/github/varka/varka/landing-page/components/dashboard/DashboardHeader.tsx)
+- Add contextual headline and copy when `activeSection === 'prediction'`:
+  - Headline: "Forecast freight rates. *Plan the voyage.*"
+  - Subtext: "Varka combines freight history, vessel constraints, and voyage conditions to support charter decisions."
+
+#### [NEW] [landing-page/components/dashboard/PortPredictionPanel.tsx](file:///c:/github/varka/varka/landing-page/components/dashboard/PortPredictionPanel.tsx)
+- Main dashboard module containing:
+  1. **Route & Vessel Selection**: Dynamic selectors populated from `GET /api/v1/prediction/routes` for Origin, Destination, Vessel class (Capesize, Panamax, Supramax, Handysize), and Cargo parcel size.
+  2. **60-Day Freight Rate Forecast Curve**: Interactive SVG time-series chart rendering real XGBoost predictions, P10/P90 confidence envelope, current rate, and horizon trajectory.
+  3. **Forecast Drivers & Feature Contributions**: Ranked horizontal contribution bars illustrating model drivers (BDI, coal index, congestion, lag rates, seasonality).
+  4. **Live Marine Conditions Widget**: Real-time wave height, wind-wave height, and sea risk index fetched from Open-Meteo via backend proxy for selected ports.
+  5. **Two-Port Vessel Feasibility Matrix**: Real checks against origin and destination max draft, LOA, beam, and cargo capacity.
+  6. **Just-in-Time (JIT) Decarbonization Planner**: Real slow-steaming calculation showing speed recommendation, hours saved at anchorage, fuel saved (MT), CO₂ emissions avoided (MT), and cost savings.
+  7. **Commercial Charter Strategy**: Commercial posture recommendation (e.g., *Wait for forecast entry window*, *Staged 3-voyage cover*) and contractual protections.
+  8. **Comprehensive UI States**: Dedicated skeleton loading states, empty state guards, and error banners.
+
+#### [MODIFY] [landing-page/app/page.tsx](file:///c:/github/varka/varka/landing-page/app/page.tsx)
+- Mount `<PortPredictionPanel />` when `activeSection === 'prediction'`.
+
+#### [MODIFY] [landing-page/app/globals.css](file:///c:/github/varka/varka/landing-page/app/globals.css)
+- Add bespoke styling for `PortPredictionPanel`: SVG rate chart styling, driver bars, feasibility indicators, JIT metrics, and selector inputs matching the dark maritime industrial aesthetic.
+
+---
+
+## Verification Plan
+
+### Automated & Unit Tests
+1. **Python API Validation**:
+   - Start FastAPI with uvicorn on port 8000.
+   - `GET http://127.0.0.1:8000/health` $\to$ verify status `ok`.
+   - `GET http://127.0.0.1:8000/api/v1/routes` $\to$ verify 33 routes, 14 origins, 7 destinations.
+   - `GET http://127.0.0.1:8000/api/v1/predict/forecast?route_id=AUNTL_INPAR&vessel=Capesize` $\to$ verify 60-day forecast array and drivers.
+   - `GET http://127.0.0.1:8000/api/v1/live/marine?port_code=INPAR` $\to$ verify real wave height and risk from Open-Meteo.
+   - `POST http://127.0.0.1:8000/api/v1/plan/jit` $\to$ verify fuel and CO₂ calculation.
+2. **Node Backend Validation**:
+   - `GET http://localhost:3030/api/v1/prediction/routes` without auth $\to$ verify `401 Unauthorized`.
+   - With bearer token $\to$ verify proxy returns route data.
+3. **TypeScript Build Validation**:
+   - Run `node ./node_modules/typescript/bin/tsc --noEmit` in `landing-page/` $\to$ 0 errors.
+
+### Browser End-to-End Verification
+1. Sign in as `raghvendra@varka.ai` on `http://localhost:3000/signin`.
+2. On homepage, verify `PORT FORECAST` appears in the left sidebar with `ML` badge and `TrendingUp` icon.
+3. Click `PORT FORECAST`:
+   - Verify dynamic route options load from the API.
+   - Verify 60-day freight forecast chart displays real XGBoost curves and confidence bands.
+   - Verify forecast drivers bar chart renders model impacts.
+   - Verify live marine conditions card renders wave heights from Open-Meteo.
+   - Verify vessel feasibility matrix shows draft, LOA, beam compliance.
+   - Verify JIT decarbonization metrics show fuel and CO₂ savings.
+4. Test changing route or vessel selection $\to$ verify forecast and feasibility dynamically re-query and update.
+5. Verify existing tabs (`TRACKING`, `HISTORY`, `AGENT`) continue to function without regressions.
+6. Verify mobile responsiveness on small screen.
