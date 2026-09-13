@@ -7,9 +7,10 @@ const envSchema = z.object({
         .regex(/^\d+$/, {
             error: 'Only numbers are allowed !',
         })
-        .transform((val) => parseInt(val, 10))
-        .refine((val) => val > 0 && val <= 65355, {
-            error: 'Port number must be in range (0, 65355]',
+        .default('3030')
+        .transform((val: string) => parseInt(val, 10))
+        .refine((val: number) => val > 0 && val <= 65535, {
+            error: 'Port number must be in range (0, 65535]',
         }),
 
     MONGODB_URI: z
@@ -18,19 +19,17 @@ const envSchema = z.object({
         .min(1, {
             error: 'MONGODB_URI cannot be empty !',
         })
-        .regex(
-            /^mongodb(?:\+srv)?:\/\/(?:(?:[^:]+):(?:[^@]+)@)?(?:(?:[a-zA-Z0-9.-]+)(?::\d+)?(?:,[a-zA-Z0-9.-]+(?::\d+)?)*)(?:\/[^?#]*)?(?:\?[^#]*)?$/,
-            {
-                error: 'Invalid MongoDB connection string format',
-            },
-        ),
+        .refine((val) => val.startsWith('mongodb://') || val.startsWith('mongodb+srv://'), {
+            error: 'MONGODB_URI must start with mongodb:// or mongodb+srv://',
+        }),
 
     SALT_ROUNDS: z
         .string()
         .regex(/^\d+$/, {
             error: 'Only numbers are allowed !',
         })
-        .transform((val) => parseInt(val, 10))
+        .default('10')
+        .transform((val: string) => parseInt(val, 10))
         .pipe(
             z
                 .number()
@@ -44,14 +43,18 @@ const envSchema = z.object({
 
     ACCESS_TOKEN_SECRET: z
         .string()
-        .trim(),
+        .trim()
+        .min(1, {
+            error: 'ACCESS_TOKEN_SECRET cannot be empty !',
+        }),
 
     ACCESS_TOKEN_EXPIRY: z
         .string()
         .trim()
         .regex(/^\d+[smhd]$/, {
             error: 'ACCESS_TOKEN_EXPIRY must be in format like 15m, 2h, 1d, 30s',
-        }),
+        })
+        .default('1d'),
 
     SMTP_HOST: z.string().optional().default('smtp.gmail.com'),
     SMTP_PORT: z
