@@ -12,6 +12,18 @@ from api.routers import quote, ports, carriers, fees
 async def lifespan(app: FastAPI):
     # Initialize DB schema on startup
     init_db()
+    try:
+        from api.db.engine import SessionLocal
+        from api.db.models import Port
+        from seed import seed_database
+        db = SessionLocal()
+        try:
+            if db.query(Port).count() == 0:
+                seed_database()
+        finally:
+            db.close()
+    except Exception as e:
+        print(f"[Lifespan] Auto-seed note: {e}")
     yield
 
 

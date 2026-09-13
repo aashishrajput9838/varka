@@ -150,8 +150,11 @@ export default function LandedCostPanel() {
 
   // Get dynamic API base URL
   const getApiUrl = () => {
+    if (process.env.NEXT_PUBLIC_RESEARCH_AGENT_URL) {
+      return process.env.NEXT_PUBLIC_RESEARCH_AGENT_URL.replace(/\/$/, '')
+    }
     if (typeof window !== 'undefined' && window.location.hostname && window.location.hostname !== 'localhost' && window.location.hostname !== '127.0.0.1') {
-      return `http://${window.location.hostname}:8001`
+      return 'https://helpful-spirit-production-c289.up.railway.app'
     }
     return 'http://localhost:8001'
   }
