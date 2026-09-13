@@ -129,6 +129,7 @@ def health_check():
 
 
 @app.get("/api/v1/routes")
+@app.get("/api/v1/prediction/routes")
 def get_routes_and_ports():
     """Return available origins, Indian destinations, vessel classes, and routes."""
     ts, ports_in, ports_origin, vessels, routes, summary = load_data()
@@ -196,6 +197,7 @@ def get_routes_and_ports():
 
 
 @app.get("/api/v1/predict/forecast")
+@app.get("/api/v1/prediction/forecast")
 def get_forecast(
     route_id: str = Query(..., description="Route ID, e.g. AUNTL_INPAR"),
     vessel: str = Query("Supramax", description="Vessel class"),
@@ -290,6 +292,7 @@ def get_forecast(
 
 
 @app.get("/api/v1/live/marine")
+@app.get("/api/v1/prediction/marine")
 def get_marine_conditions(port_code: str = Query(..., description="5-character UN/LOCODE")):
     """Fetch live sea state & wave conditions from Open-Meteo."""
     if port_code not in PORT_COORDS:
@@ -302,6 +305,7 @@ def get_marine_conditions(port_code: str = Query(..., description="5-character U
 
 
 @app.get("/api/v1/live/context")
+@app.get("/api/v1/prediction/context")
 def get_live_context(
     origin_code: str = Query(..., description="Origin port code"),
     dest_code: str = Query(..., description="Destination port code"),
@@ -312,6 +316,7 @@ def get_live_context(
 
 
 @app.post("/api/v1/optimize/vessel")
+@app.post("/api/v1/prediction/optimize-vessel")
 def optimize_vessel_choice(req: VesselOptimizationRequest):
     """Run port feasibility checks and multi-objective scoring across vessel classes."""
     ts, ports_in, ports_origin, vessels, routes, summary = load_data()
@@ -391,6 +396,7 @@ def optimize_vessel_choice(req: VesselOptimizationRequest):
 
 
 @app.post("/api/v1/plan/jit")
+@app.post("/api/v1/prediction/plan-jit")
 def plan_jit(req: JITPlanRequest):
     """Compute slow-steaming plan, anchorage wait avoided, fuel saved, and CO2 reduction."""
     ts, ports_in, ports_origin, vessels, routes, summary = load_data()
@@ -437,6 +443,7 @@ class ScenariosRequest(BaseModel):
 
 
 @app.post("/api/v1/strategy/charter")
+@app.post("/api/v1/prediction/strategy")
 def get_charter_strategy(req: CharterStrategyRequest):
     """Generate commercial posture, early-warning alerts, and scenario sensitivity."""
     ts, ports_in, ports_origin, vessels, routes, summary = load_data()
@@ -536,6 +543,7 @@ def get_charter_strategy(req: CharterStrategyRequest):
 
 
 @app.post("/api/v1/assistant/query")
+@app.post("/api/v1/prediction/assistant")
 def charter_assistant_query(req: AssistantQueryRequest):
     """Answer chartering and freight decision queries grounded on active dashboard state."""
     ts, ports_in, ports_origin, vessels, routes, summary = load_data()
@@ -646,6 +654,7 @@ def charter_assistant_query(req: AssistantQueryRequest):
 
 
 @app.post("/api/v1/scenarios")
+@app.post("/api/v1/prediction/scenarios")
 def get_freight_scenarios(req: ScenariosRequest):
     """Stress test freight rates across Base, Congestion Escalation, Bull, and Bear paths."""
     ts, _, _, _, _, _ = load_data()
@@ -685,6 +694,7 @@ def get_freight_scenarios(req: ScenariosRequest):
 
 
 @app.get("/api/v1/ports/scorecard")
+@app.get("/api/v1/prediction/scorecard")
 def get_port_scorecard(cargo: int = Query(55000, ge=5000, le=200000)):
     """Return port efficiency rankings and throughput metrics for Indian discharge ports."""
     _, ports_in, _, _, _, _ = load_data()
@@ -705,6 +715,7 @@ def get_port_scorecard(cargo: int = Query(55000, ge=5000, le=200000)):
 
 
 @app.get("/api/v1/fleet/availability")
+@app.get("/api/v1/prediction/fleet")
 def get_fleet_availability():
     """Return real fleet roster availability and laycan readiness constraints."""
     _, _, _, vessels, _, _ = load_data()
@@ -713,6 +724,7 @@ def get_fleet_availability():
 
 
 @app.post("/api/v1/risk/cockpit")
+@app.post("/api/v1/prediction/risk-cockpit")
 def get_risk_cockpit(req: RiskCockpitRequest):
     """Return multi-factor voyage risk breakdown and mitigations."""
     df = risk_cockpit(
@@ -727,6 +739,7 @@ def get_risk_cockpit(req: RiskCockpitRequest):
 
 
 @app.post("/api/v1/decision/audit")
+@app.post("/api/v1/prediction/audit")
 def get_decision_audit(req: AuditRequest):
     """Return governed decision audit trail for charter committee review."""
     df = decision_audit(
@@ -742,6 +755,7 @@ def get_decision_audit(req: AuditRequest):
 
 
 @app.get("/api/v1/standards/mapping")
+@app.get("/api/v1/prediction/standards")
 def get_standards_mapping():
     """Return standards-ready mapping for DCSA Port Call and IMO Maritime Single Window."""
     df = standards_mapping()
