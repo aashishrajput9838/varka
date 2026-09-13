@@ -1,0 +1,57 @@
+# Dependencies
+**/node_modules/
+**/node_modules
+node_modules/
+node_modules
+
+# Next.js & Frontend Build Outputs
+**/.next/
+**/.next
+**/dist/
+**/dist
+**/build/
+**/build
+**/out/
+**/out
+
+# Python Virtual Environments
+**/.venv/
+**/.venv
+**/venv/
+**/venv
+**/env/
+**/env
+**/ENV/
+**/ENV
+
+# Python Cache & Bytecode
+**/__pycache__/
+**/__pycache__
+**/.pytest_cache/
+**/.pytest_cache
+*.pyc
+*.pyo
+*.pyd
+
+# Local Database Files
+*.db
+*.sqlite
+*.sqlite3
+**/shipping_cost.db
+
+# Environment & Secrets
+.env
+.env.*
+!.env.example
+**/.env
+**/.env.*
+!**/.env.example
+
+# Logs & Runtime State
+*.log
+celerybeat-schedule
+celerybeat.pid
+
+# OS & Editor Artifacts
+.DS_Store
+Thumbs.db

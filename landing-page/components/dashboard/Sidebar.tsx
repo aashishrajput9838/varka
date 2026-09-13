@@ -14,6 +14,7 @@ import {
   Ship,
   ShieldAlert,
   FileCheck2,
+  DollarSign,
 } from 'lucide-react'
 import { NavSection, UserProfileData } from './types'
 import UserProfile from './UserProfile'
@@ -40,6 +41,13 @@ export default function Sidebar({
       subtitle: 'Voyage monitoring',
       icon: Compass,
       badge: 'LIVE',
+    },
+    {
+      id: 'landed-cost' as NavSection,
+      label: 'LANDED COST AGENT',
+      subtitle: 'True freight & accessorials',
+      icon: DollarSign,
+      badge: 'NEW',
     },
     {
       id: 'cockpit' as NavSection,

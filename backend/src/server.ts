@@ -2,6 +2,8 @@ import "dotenv/config";
 import app from "./app.js";
 import connectMongoDB from "./db/mongodb/connection.js";
 import config from "./config/index.js";
+import { initVarkaIntelligenceWs } from "./websocket/varkaIntelligence.ws.js";
+// Reloaded with active Gemini API integration
 
 const startServer = async () => {
   try {
@@ -10,8 +12,11 @@ const startServer = async () => {
       console.log(`\n==================================================`);
       console.log(`🚀 VARKA Backend Server running at http://localhost:${config.port}`);
       console.log(`📡 API Base URL: http://localhost:${config.port}/api/v1/user`);
+      console.log(`🤖 VARKA INTELLIGENCE WebSocket: ws://localhost:${config.port}/ws/varka-intelligence`);
       console.log(`==================================================\n`);
     });
+
+    initVarkaIntelligenceWs(server);
 
     const shutdown = () => {
       console.log("\nShutting down server gracefully...");

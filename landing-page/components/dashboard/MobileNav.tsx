@@ -17,6 +17,7 @@ import {
   Ship,
   ShieldAlert,
   FileCheck2,
+  DollarSign,
 } from 'lucide-react'
 import { NavSection, UserProfileData } from './types'
 import UserProfile from './UserProfile'
@@ -67,6 +68,12 @@ export default function MobileNav({
       label: 'TRACKING',
       subtitle: 'Voyage monitoring',
       icon: Compass,
+    },
+    {
+      id: 'landed-cost' as NavSection,
+      label: 'LANDED COST AGENT',
+      subtitle: 'True freight & accessorials',
+      icon: DollarSign,
     },
     {
       id: 'cockpit' as NavSection,

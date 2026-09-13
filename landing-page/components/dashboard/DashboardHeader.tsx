@@ -154,6 +154,17 @@ export default function DashboardHeader({ activeSection, user }: DashboardHeader
           subtext:
             'DCSA Port Call / IMO Maritime Single Window mappings enriched with real-time World Bank and Open-Meteo context.',
         }
+      case 'landed-cost':
+        return {
+          eyebrow: 'OCEAN FREIGHT LANDED-COST RESEARCH AGENT',
+          headline: (
+            <>
+              True landed-cost & <em>accessorial tariffs.</em>
+            </>
+          ),
+          subtext:
+            'Aggregate liner ocean freight rates with terminal handling charges (THC), bunker adjustments (BAF), currency factors (CAF), and demurrage schedules.',
+        }
       case 'tracking':
       default:
         return {

@@ -62,6 +62,9 @@ const envSchema = z.object({
     SMTP_USER: z.string().optional(),
     SMTP_PASS: z.string().optional(),
     EMAIL_FROM: z.string().optional().default('VARKA <no-reply@varka.ai>'),
+    GEMINI_API_KEY: z.string().optional(),
+    GEMINI_MODEL: z.string().optional().default('gemini-2.5-flash'),
+    PYTHON_API_URL: z.string().optional().default('http://127.0.0.1:8000'),
 })
 
 const parsedEnv = envSchema.safeParse(process.env)
@@ -82,6 +85,9 @@ const config = {
     smtpUser: parsedEnv.data.SMTP_USER,
     smtpPass: parsedEnv.data.SMTP_PASS,
     emailFrom: parsedEnv.data.EMAIL_FROM,
+    geminiApiKey: parsedEnv.data.GEMINI_API_KEY || process.env.GEMINI_API_KEY || '',
+    geminiModel: parsedEnv.data.GEMINI_MODEL || process.env.GEMINI_MODEL || 'gemini-2.5-flash',
+    pythonApiUrl: parsedEnv.data.PYTHON_API_URL || process.env.PYTHON_API_URL || 'http://127.0.0.1:8000',
 } as const
 
 export default config

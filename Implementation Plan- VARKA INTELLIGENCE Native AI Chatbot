@@ -1,0 +1,184 @@
+# Implementation Plan: VARKA INTELLIGENCE Native AI Chatbot
+
+Add a floating AI chatbot (**VARKA INTELLIGENCE**) in the bottom-right corner of the authenticated Varka dashboard. Unlike generic chatbots, Varka Intelligence continuously ingests live operational context (Tracking, History, Agent, Port Forecast, JIT, Fleet, Weather/Marine) and uses the backend Gemini streaming API via authenticated WebSockets to answer operational maritime questions.
+
+---
+
+## User Review Required
+
+> [!IMPORTANT]
+> - **Backend-Only Gemini Key:** The Gemini API key will be kept strictly on the Express backend via `GEMINI_API_KEY` in `backend/.env`. The frontend communicates exclusively through authenticated WebSockets (`/ws/varka-intelligence`).
+> - **Dependency Additions:** In `backend`, we will add `ws` (and `@types/ws`) for high-performance WebSockets and `@google/genai` (or `@google/generative-ai`) for the official Gemini API SDK.
+> - **Grounded Context Fallback:** If `GEMINI_API_KEY` is not provided or Gemini returns rate-limit errors, the backend context engine will fall back to an intelligent local grounded operational response based directly on the active Varka context, ensuring the dashboard never breaks or shows generic errors.
+
+---
+
+## Architecture Overview
+
+```
+Frontend (Next.js Dashboard - Port 3000)
+┌────────────────────────────────────────────────────────────┐
+│  Tracking | History | Agent | Port Forecast / Cockpit     │
+│                             │                              │
+│                             ▼                              │
+│        [Varka Intelligence Floating Chat Widget]           │
+│         - Bottom-Right Floating Button ("✦ VARKA AI")      │
+│         - Expanded Chat Window with Live Status Pill       │
+│         - Contextual Quick Action Chips                    │
+│         - Token-by-Token Streaming Message Bubble          │
+└─────────────────────────────┬──────────────────────────────┘
+                              │ Authenticated WebSocket
+                              │ (Bearer JWT / Cookie)
+                              ▼
+Backend (Express / Node.js - Port 3030)
+┌────────────────────────────────────────────────────────────┐
+│  /ws/varka-intelligence WebSocket Gateway                  │
+│   ├── JWT Handshake Authentication (auth.middleware)       │
+│   ├── Client Session & Connection Manager                  │
+│   │                                                        │
+│   ▼                                                        │
+│  Varka Context Engine (varka-context.service.ts)           │
+│   ├── Aggregates Live Voyage, Vessel, & Tracking State     │
+│   ├── Ingests Freight Forecast, JIT, Fleet & Risk Metrics  │
+│   ├── Syncs Client Parameter Changes in Real Time          │
+│   └── Prepares Compact, Structured Operational Prompt      │
+│   │                                                        │
+│   ▼                                                        │
+│  Gemini Streaming Service (gemini.service.ts)              │
+│   ├── System Instruction (Varka Maritime Intelligence)     │
+│   ├── Model: gemini-3.8-flash (via GEMINI_MODEL env)       │
+│   └── Real-time Token Streaming over WebSocket             │
+└────────────────────────────────────────────────────────────┘
+```
+
+---
+
+## Proposed Changes
+
+### 1. Backend: Dependencies & Configuration
+
+#### [MODIFY] [`backend/package.json`](file:///c:/github/varka/varka/backend/package.json)
+- Add `ws` and `@google/genai` (or `@google/generative-ai`) to `dependencies`.
+- Add `@types/ws` to `devDependencies`.
+
+#### [MODIFY] [`backend/src/config/index.ts`](file:///c:/github/varka/varka/backend/src/config/index.ts)
+- Update Zod env schema to include:
+  - `GEMINI_API_KEY`: optional string.
+  - `GEMINI_MODEL`: optional string, default `'gemini-3.8-flash'`.
+  - `PYTHON_API_URL`: optional string, default `'http://127.0.0.1:8000'`.
+
+#### [MODIFY] [`backend/.env`](file:///c:/github/varka/varka/backend/.env)
+- Add `GEMINI_API_KEY=` and `GEMINI_MODEL=gemini-3.8-flash`.
+
+---
+
+### 2. Backend: Core Services & WebSocket Gateway
+
+#### [NEW] [`backend/src/services/varka-context.service.ts`](file:///c:/github/varka/varka/backend/src/services/varka-context.service.ts)
+- Maintain structured, live operational context per user session:
+  - `user`: name, email, role.
+  - `activeSection`: current tab (tracking, forecast, optimizer, jit, risk, agent, history).
+  - `voyage`: current selected voyage (vessel name, IMO, route, cargo, departure, ETA, status, risk).
+  - `tracking`: real-time speed, coordinates, heading, distance remaining, navigation alerts.
+  - `prediction`: route ID, current rate, 60-day forecast outlook, confidence intervals (P10/P90), key drivers.
+  - `marine`: wave height, wind, sea state, weather risk.
+  - `vesselOptimization`: recommended class, DWT utilisation %, feasibility score.
+  - `jit`: recommended speed, anchorage wait avoided, fuel saved, CO2 reduced.
+  - `charterStrategy`: multi-voyage rates, discounts, expected savings.
+  - `agentAnalysis`: quoted rate, landed cost min/max, hidden cost variance %.
+  - `recentEvents`: chronological operational event log.
+- Provide methods:
+  - `initializeContext(userId, initialData)`
+  - `updateContext(userId, path, value, source)`
+  - `mergeContext(userId, partialContext)`
+  - `getFormattedPromptContext(userId)`: produces a clean, concise markdown/JSON summary for the Gemini prompt without exceeding token limits.
+
+#### [NEW] [`backend/src/services/gemini.service.ts`](file:///c:/github/varka/varka/backend/src/services/gemini.service.ts)
+- Dedicated Gemini API integration with streaming support:
+  - System prompt enforcing strict adherence to supplied Varka operational context.
+  - Conversational memory management for active session.
+  - Streams text chunks as they arrive from Gemini.
+  - Grounded fallback generator if `GEMINI_API_KEY` is not set or rate limits occur.
+
+#### [NEW] [`backend/src/websocket/varka-intelligence.gateway.ts`](file:///c:/github/varka/varka/backend/src/websocket/varka-intelligence.gateway.ts)
+- Attaches to the Express HTTP server on route `/ws/varka-intelligence`.
+- Handles WebSocket connection lifecycle:
+  - **Authentication Handshake:** Extracts JWT from connection URL query parameter (`?token=...`), `Authorization` header, or cookie. Verifies using `jwtService.verifyAccessToken(token)`. Rejects unauthorized connections with code `4001`.
+  - **Message Dispatcher:**
+    - `chat.send`: Triggers context generation and calls `gemini.service.ts` with streaming tokens back to the client (`chat.start`, `chat.token`, `chat.complete`, `chat.error`).
+    - `context.update` & `context.sync`: Updates the session's live operational context in real time.
+    - `chat.history.clear`: Resets active session conversation.
+  - **Heartbeat & Ping/Pong:** Detects stale sockets and manages clean reconnection.
+
+#### [MODIFY] [`backend/src/server.ts`](file:///c:/github/varka/varka/backend/src/server.ts)
+- Initialize and attach `VarkaIntelligenceGateway` to the HTTP server created by `app.listen()`.
+
+---
+
+### 3. Frontend: Varka Intelligence Floating UI
+
+#### [NEW] [`landing-page/components/dashboard/varka-intelligence/types.ts`](file:///c:/github/varka/varka/landing-page/components/dashboard/varka-intelligence/types.ts)
+- Types for chat messages, WebSocket events, quick actions, connection status, and operational context updates.
+
+#### [NEW] [`landing-page/components/dashboard/varka-intelligence/useVarkaWebSocket.ts`](file:///c:/github/varka/varka/landing-page/components/dashboard/varka-intelligence/useVarkaWebSocket.ts)
+- Custom React hook managing:
+  - Authenticated WebSocket connection to `ws://localhost:3030/ws/varka-intelligence?token=...`.
+  - Reconnection logic with exponential backoff.
+  - Streaming message accumulator.
+  - Connection status (`CONNECTED`, `CONNECTING`, `RECONNECTING`, `OFFLINE`).
+  - Context synchronization dispatchers (`syncContext`, `updateContextField`).
+
+#### [NEW] [`landing-page/components/dashboard/varka-intelligence/VarkaChatButton.tsx`](file:///c:/github/varka/varka/landing-page/components/dashboard/varka-intelligence/VarkaChatButton.tsx)
+- Floating button anchored to bottom-right corner:
+  - Stylized `✦ VARKA AI` badge with pulsing status dot and subtle glow.
+  - Unread badge indicator.
+  - Expand/collapse animation.
+
+#### [NEW] [`landing-page/components/dashboard/varka-intelligence/VarkaChatWindow.tsx`](file:///c:/github/varka/varka/landing-page/components/dashboard/varka-intelligence/VarkaChatWindow.tsx)
+- The floating chat window matching Varka maritime design aesthetics:
+  - Header with `✦ VARKA INTELLIGENCE`, live status pill (`● LIVE CONTEXT`), minimize/close button, and clear chat action.
+  - Scrollable message thread with timestamps, user messages, and Varka responses.
+  - Streaming cursor animation (`typing` state).
+  - Dynamic contextual quick action chips (e.g. `Explain forecast`, `Check vessel fit`, `Optimize arrival`, `Compare charter options`, `Why did ETA change?`).
+  - Multiline textarea with Enter to send and Shift+Enter for newline.
+  - Dedicated submit button.
+
+#### [NEW] [`landing-page/components/dashboard/varka-intelligence/VarkaChatbot.tsx`](file:///c:/github/varka/varka/landing-page/components/dashboard/varka-intelligence/VarkaChatbot.tsx)
+- Main container component combining `VarkaChatButton` and `VarkaChatWindow`.
+- Bridges active dashboard state (`activeSection`, `currentVoyage`, `currentUser`, and prediction state) into the WebSocket context engine.
+
+#### [MODIFY] [`landing-page/app/page.tsx`](file:///c:/github/varka/varka/landing-page/app/page.tsx)
+- Mount `VarkaChatbot` at the root of `AuthenticatedDashboardPage` so it persists continuously across all navigation sections (Tracking, History, Agent, Port Forecast).
+
+#### [MODIFY] [`landing-page/app/globals.css`](file:///c:/github/varka/varka/landing-page/app/globals.css)
+- Add CSS styles for floating widget, chat window layout, glassmorphism cards, glowing status pill, message bubbles, quick action chips, and mobile bottom-sheet styling.
+
+---
+
+## Verification Plan
+
+### Automated Compilation & Build
+1. **Backend:**
+   ```bash
+   cd c:\github\varka\varka\backend
+   npm run build
+   ```
+2. **Frontend:**
+   ```bash
+   cd c:\github\varka\varka\landing-page
+   npx tsc --noEmit
+   ```
+
+### Functional & WebSocket Verification
+1. **Unauthenticated Access Rejection:** Verify that opening the WebSocket without a token or with an invalid token returns a `4001 Unauthorized` close code.
+2. **Authenticated Connection:** Connect with a valid user JWT, verify `auth.success` message and `● LIVE CONTEXT` status indicator.
+3. **Live Context Sync:** Verify that switching between `Tracking`, `Agent`, and `Port Forecast` or changing parameters (e.g., vessel, cargo, congestion) sends `context.sync` and updates the backend session state.
+4. **Context-Aware Query & Streaming:**
+   - Send *"Why is Panamax recommended?"* while in Port Forecast -> Verify streamed response grounds on Panamax DWT, parcel utilisation, and laycan fit.
+   - Send *"What is the voyage status and ETA?"* while in Tracking -> Verify response accurately states M/V Ocean Sentinel, 14.6 knots, and 18 Sep 2026 ETA.
+   - Send *"Are there hidden costs?"* while in Agent -> Verify response identifies demurrage or landed cost variance.
+5. **Quick Action Chips:** Click `[ Explain forecast ]` and confirm immediate streamed explanation.
+6. **Multi-Turn Memory:** Ask *"What is the rate?"* followed by *"Why?"* to confirm conversational context retention.
+
+### Browser & Visual Testing
+- Use `browser_subagent` to open `http://localhost:3000/`, verify bottom-right floating button, open chat window, test quick action, verify real-time token streaming, switch tabs, and capture screenshots.

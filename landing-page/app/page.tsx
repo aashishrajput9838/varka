@@ -8,7 +8,9 @@ import DashboardHeader from '@/components/dashboard/DashboardHeader'
 import TrackingPanel from '@/components/dashboard/TrackingPanel'
 import HistoryPanel from '@/components/dashboard/HistoryPanel'
 import AgentPanel from '@/components/dashboard/AgentPanel'
+import LandedCostPanel from '@/components/dashboard/LandedCostPanel'
 import PortPredictionPanel from '@/components/dashboard/PortPredictionPanel'
+import VarkaIntelligence from '@/components/dashboard/varka-intelligence/VarkaIntelligence'
 import { NavSection, UserProfileData, VoyageData } from '@/components/dashboard/types'
 import { DEMO_VOYAGES } from '@/components/dashboard/mockData'
 
@@ -171,6 +173,8 @@ export default function AuthenticatedDashboardPage() {
 
             {activeSection === 'agent' && <AgentPanel />}
 
+            {activeSection === 'landed-cost' && <LandedCostPanel />}
+
             {(activeSection === 'prediction' ||
               activeSection === 'cockpit' ||
               activeSection === 'assistant' ||
@@ -197,6 +201,13 @@ export default function AuthenticatedDashboardPage() {
           </footer>
         </div>
       </main>
+
+      {/* Floating VARKA INTELLIGENCE Contextual AI Copilot */}
+      <VarkaIntelligence
+        activeSection={activeSection}
+        currentVoyage={currentVoyage}
+        currentUser={currentUser}
+      />
     </div>
   )
 }
