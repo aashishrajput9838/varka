@@ -97,6 +97,18 @@ export default function AuthenticatedDashboardPage() {
     }
   }
 
+  // Handle section selection with redirect for tracking module
+  const handleSelectSection = (section: NavSection) => {
+    if (section === 'tracking') {
+      const shipTrackingUrl =
+        process.env.NEXT_PUBLIC_SHIP_TRACKING_URL?.replace(/\/$/, '') ||
+        'http://localhost:3001'
+      window.location.href = shipTrackingUrl
+      return
+    }
+    setActiveSection(section)
+  }
+
   // Loading Splash Screen while checking auth with backend
   if (isValidatingSession) {
     return (
@@ -127,7 +139,7 @@ export default function AuthenticatedDashboardPage() {
       {/* Desktop Fixed Left Sidebar */}
       <Sidebar
         activeSection={activeSection}
-        onSelectSection={setActiveSection}
+        onSelectSection={handleSelectSection}
         user={currentUser}
         onLogout={handleLogout}
         isLoggingOut={isLoggingOut}
@@ -136,7 +148,7 @@ export default function AuthenticatedDashboardPage() {
       {/* Mobile & Tablet Header with Drawer */}
       <MobileNav
         activeSection={activeSection}
-        onSelectSection={setActiveSection}
+        onSelectSection={handleSelectSection}
         user={currentUser}
         onLogout={handleLogout}
         isLoggingOut={isLoggingOut}
@@ -160,7 +172,7 @@ export default function AuthenticatedDashboardPage() {
             {activeSection === 'history' && (
               <HistoryPanel
                 onLoadVoyageInTracking={(_ref) => {
-                  setActiveSection('tracking')
+                  handleSelectSection('tracking')
                 }}
               />
             )}

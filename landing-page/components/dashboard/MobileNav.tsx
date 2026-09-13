@@ -150,6 +150,14 @@ export default function MobileNav({
   ]
 
   const handleSelect = (id: NavSection) => {
+    if (id === 'tracking') {
+      setIsOpen(false)
+      const shipTrackingUrl =
+        process.env.NEXT_PUBLIC_SHIP_TRACKING_URL?.replace(/\/$/, '') ||
+        'http://localhost:3001'
+      window.location.href = shipTrackingUrl
+      return
+    }
     onSelectSection(id)
     setIsOpen(false)
   }

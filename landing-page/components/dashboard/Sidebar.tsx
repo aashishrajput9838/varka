@@ -128,6 +128,17 @@ export default function Sidebar({
     },
   ]
 
+  const handleNavClick = (id: NavSection) => {
+    if (id === 'tracking') {
+      const shipTrackingUrl =
+        process.env.NEXT_PUBLIC_SHIP_TRACKING_URL?.replace(/\/$/, '') ||
+        'http://localhost:3001'
+      window.location.href = shipTrackingUrl
+      return
+    }
+    onSelectSection(id)
+  }
+
   return (
     <aside className="varka-sidebar" aria-label="Main Navigation">
       {/* Brand & Logo */}
@@ -153,7 +164,7 @@ export default function Sidebar({
               <li key={item.id} className="varka-sidebar-nav-item">
                 <button
                   type="button"
-                  onClick={() => onSelectSection(item.id)}
+                  onClick={() => handleNavClick(item.id)}
                   className={`varka-sidebar-nav-btn ${isActive ? 'is-active' : ''}`}
                   aria-current={isActive ? 'page' : undefined}
                 >
