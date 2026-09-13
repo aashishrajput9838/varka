@@ -18,6 +18,7 @@ import {
   ShieldAlert,
   FileCheck2,
   DollarSign,
+  Database,
 } from 'lucide-react'
 import { NavSection, UserProfileData } from './types'
 import UserProfile from './UserProfile'
@@ -74,6 +75,12 @@ export default function MobileNav({
       label: 'LANDED COST AGENT',
       subtitle: 'True freight & accessorials',
       icon: DollarSign,
+    },
+    {
+      id: 'port-prediction-engine' as NavSection,
+      label: 'PORT PREDICTION ENGINE',
+      subtitle: 'XGBoost ML & FastAPI',
+      icon: Database,
     },
     {
       id: 'cockpit' as NavSection,
@@ -156,6 +163,14 @@ export default function MobileNav({
         process.env.NEXT_PUBLIC_SHIP_TRACKING_URL?.replace(/\/$/, '') ||
         'http://localhost:3001'
       window.location.href = shipTrackingUrl
+      return
+    }
+    if (id === 'port-prediction-engine') {
+      setIsOpen(false)
+      const predictionEngineUrl =
+        process.env.NEXT_PUBLIC_PORT_PREDICTION_URL?.replace(/\/$/, '') ||
+        'http://localhost:8000'
+      window.open(`${predictionEngineUrl}/docs`, '_blank')
       return
     }
     onSelectSection(id)

@@ -13,6 +13,7 @@ export type NavSection =
   | 'risk'
   | 'standards'
   | 'landed-cost'
+  | 'port-prediction-engine'
 
 export interface FleetRosterItem {
   vessel_type: string
